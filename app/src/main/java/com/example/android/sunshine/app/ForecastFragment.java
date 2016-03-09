@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -37,7 +39,6 @@ import java.util.ArrayList;
  */
 public class ForecastFragment extends Fragment {
     static final String LOG_TAG = ForecastFragment.class.getSimpleName();
-    String location;
 
     ArrayAdapter<String> mForecastAdapter;
 
@@ -48,9 +49,6 @@ public class ForecastFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        // I don't know if this should go somewhere else or not...
-        location = "94043";
     }
 
     @Override
@@ -64,8 +62,12 @@ public class ForecastFragment extends Fragment {
 
         if (id == R.id.action_refresh) {
             FetchWeatherTask fetchWeather = new FetchWeatherTask();
-            fetchWeather.execute(location);
-
+            SharedPreferences sharedPref = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            fetchWeather.execute(sharedPref.getString(
+                    getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default)
+            ));
             return true;
         } else {
             return super.onOptionsItemSelected(item);
