@@ -83,20 +83,11 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Fake weather data, for prototyping
-        ArrayList<String> fakeWeather = new ArrayList<>();
-        fakeWeather.add("Monday COLD");
-        fakeWeather.add("Tuesday COLDER");
-        fakeWeather.add("Wednesday WARM");
-        fakeWeather.add("Thursday 650");
-        fakeWeather.add("Fri partly farty");
-        fakeWeather.add("Sat raining squirrels");
-        fakeWeather.add("Sun global warming");
         mForecastAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                fakeWeather);
+                new ArrayList<String>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
@@ -110,6 +101,12 @@ public class ForecastFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
