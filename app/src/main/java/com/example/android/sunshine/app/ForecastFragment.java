@@ -45,6 +45,16 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
+    private void updateWeather() {
+        FetchWeatherTask fetchWeather = new FetchWeatherTask();
+        SharedPreferences sharedPref = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        fetchWeather.execute(sharedPref.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default)
+        ));
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,13 +71,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            FetchWeatherTask fetchWeather = new FetchWeatherTask();
-            SharedPreferences sharedPref = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity());
-            fetchWeather.execute(sharedPref.getString(
-                    getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default)
-            ));
+            updateWeather();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
