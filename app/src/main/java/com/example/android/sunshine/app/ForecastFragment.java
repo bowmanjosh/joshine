@@ -121,8 +121,20 @@ public class ForecastFragment extends Fragment {
 
         /**
          * GOOG helper: Prepare the weather high/lows for presentation.
+         * With addition of user preference, this method now ruined by Josh...
          */
         private String formatHighLows(double high, double low) {
+            // Find what units the user wants, convert data if necessary.
+            String wowrude = "wowrude";
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String units = prefs.getString(getString(R.string.pref_units_key), wowrude);
+            if (units.equals(wowrude)) {
+                Log.e(LOG_TAG, "do you even prefs, bro?");
+            } else if (units.equals(getString(R.string.str_fahrenheit_key))) {
+                high = high * 1.8 + 32;
+                low = low * 1.8 + 32;
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
