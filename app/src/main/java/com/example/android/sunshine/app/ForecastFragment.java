@@ -46,6 +46,7 @@ public class ForecastFragment extends Fragment {
     }
 
     private void updateWeather() {
+        Log.v(LOG_TAG, "Now inside updateWeather()");
         FetchWeatherTask fetchWeather = new FetchWeatherTask();
         SharedPreferences sharedPref = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
