@@ -9,4 +9,7 @@
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_view_map_location"
+        android:title="@string/action_view_map_location" />
 </menu>

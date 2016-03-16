@@ -74,6 +74,22 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_refresh) {
             updateWeather();
             return true;
+        } else if (id == R.id.action_view_map_location) {
+            Intent viewMapIntent = new Intent()
+                    .setAction(Intent.ACTION_VIEW)
+                    .setData(Uri.parse("geo:0,0?")
+                            .buildUpon()
+                            .appendQueryParameter("q",
+                                    PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                            .getString(getString(R.string.pref_location_key),
+                                                    getString(R.string.pref_location_default)))
+                            .build());
+            if (viewMapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(viewMapIntent);
+            } else {
+                Log.e(LOG_TAG, "No apps available to view map location.");
+            }
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -228,7 +244,7 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter("mode", "json")
                         .appendQueryParameter("units", "metric")
                         .appendQueryParameter("cnt", String.valueOf(numDays))
-                        .appendQueryParameter("APPID", "R.string.private_owm_api");
+                        .appendQueryParameter("APPID", getString(R.string.private_owm_api));
                 URL url = new URL(uriBuilder.build().toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
