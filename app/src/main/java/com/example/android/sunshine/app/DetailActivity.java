@@ -32,76 +32,78 @@ import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DetailFragment())
-                    .commit();
-        }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_detail);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .add(R.id.container, new DetailFragment())
+          .commit();
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
+
+    //noinspection SimplifiableIfStatement
+    if (id == R.id.action_settings) {
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
+  /**
+   * A placeholder fragment containing a simple view.
+   */
+  public static class DetailFragment extends Fragment {
+
+    private ShareActionProvider mShareActionProvider;
+    private String mForecastStr;
+    private final String SHARE_HASHTAG = "#SunshineApp";
+
+    public DetailFragment() {
+    }
+
+    @SuppressWarnings("deprecation")
+    private Intent createShareForecastIntent() {
+      return new Intent()
+          .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+          .setAction(Intent.ACTION_SEND)
+          .setType("text/plain")
+          .putExtra(Intent.EXTRA_TEXT, mForecastStr + SHARE_HASHTAG);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      setHasOptionsMenu(true);
+      mForecastStr = getActivity().getIntent().getExtras()
+          .getString(Intent.EXTRA_TEXT);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class DetailFragment extends Fragment {
-
-        private ShareActionProvider mShareActionProvider;
-        private String mForecastStr;
-        private final String SHARE_HASHTAG = "#SunshineApp";
-
-        public DetailFragment() {
-        }
-
-        @SuppressWarnings("deprecation")
-        private Intent createShareForecastIntent() {
-            return new Intent()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-                    .setAction(Intent.ACTION_SEND)
-                    .setType("text/plain")
-                    .putExtra(Intent.EXTRA_TEXT, mForecastStr + SHARE_HASHTAG);
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setHasOptionsMenu(true);
-            mForecastStr = getActivity().getIntent().getExtras().getString(Intent.EXTRA_TEXT);
-        }
-
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            inflater.inflate(R.menu.detail_fragment, menu);
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
-                    menu.findItem(R.id.action_menu_share));
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-            super.onCreateOptionsMenu(menu, inflater);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            TextView tv = (TextView) rootView.findViewById(R.id.detail_text);
-            tv.setText(mForecastStr);
-            return rootView;
-        }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+      inflater.inflate(R.menu.detail_fragment, menu);
+      mShareActionProvider = (ShareActionProvider) MenuItemCompat
+          .getActionProvider(menu.findItem(R.id.action_menu_share));
+      mShareActionProvider.setShareIntent(createShareForecastIntent());
+      super.onCreateOptionsMenu(menu, inflater);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        Bundle savedInstanceState) {
+      View rootView = inflater
+          .inflate(R.layout.fragment_detail, container, false);
+      TextView tv = (TextView) rootView.findViewById(R.id.detail_text);
+      tv.setText(mForecastStr);
+      return rootView;
+    }
+  }
 }
