@@ -34,6 +34,16 @@ public class WeatherContract {
 
   public static final class LocationEntry implements BaseColumns {
     public static final String TABLE_NAME = "location";
+
+    // Location string that will be sent in the OWM query
+    public static final String COL_LOC_SETTING = "location_setting";
+
+    // Human-readable location string, as returned by the API.
+    public static final String COL_CITY_NAME = "city_name";
+
+    // Latitude and longitude. (stored as ???)
+    public static final String COL_LATITUDE = "coord_latitude";
+    public static final String COL_LONGITUDE = "coord_longitude";
   }
 
   public static final class WeatherEntry implements BaseColumns {
