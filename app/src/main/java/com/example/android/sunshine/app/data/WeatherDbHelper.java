@@ -38,8 +38,8 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase sqLiteDatabase) {
-    final String SQL_CREATE_WEATHER_TABLE =
-        "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
+    final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " +
+        WeatherEntry.TABLE_NAME + " (" +
 
         /* Why AutoIncrement here, and not above? Unique keys will be
          * auto-generated in either case. But for weather forecasting, it's
@@ -48,28 +48,28 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
          * sorted accordingly. */
         WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
-            // the ID of the location that's associated with this weather data
-            WeatherEntry.COL_LOC_KEY + " INTEGER NOT NULL, " +
+        // the ID of the location that's associated with this weather data
+        WeatherEntry.COL_LOC_KEY + " INTEGER NOT NULL, " +
 
-            WeatherEntry.COL_DATE + " INTEGER NOT NULL, " +
-            WeatherEntry.COL_SHORT_DESC + " TEXT NOT NULL, " +
-            WeatherEntry.COL_WEATHER_ID + " INTEGER NOT NULL," +
-            WeatherEntry.COL_MIN_TEMP + " REAL NOT NULL, " +
-            WeatherEntry.COL_MAX_TEMP + " REAL NOT NULL, " +
-            WeatherEntry.COL_HUMIDITY + " REAL NOT NULL, " +
-            WeatherEntry.COL_PRESSURE + " REAL NOT NULL, " +
-            WeatherEntry.COL_WIND_SPEED + " REAL NOT NULL, " +
-            WeatherEntry.COL_DEGREES + " REAL NOT NULL, " +
+        WeatherEntry.COL_DATE + " INTEGER NOT NULL, " +
+        WeatherEntry.COL_SHORT_DESC + " TEXT NOT NULL, " +
+        WeatherEntry.COL_WEATHER_ID + " INTEGER NOT NULL," +
+        WeatherEntry.COL_MIN_TEMP + " REAL NOT NULL, " +
+        WeatherEntry.COL_MAX_TEMP + " REAL NOT NULL, " +
+        WeatherEntry.COL_HUMIDITY + " REAL NOT NULL, " +
+        WeatherEntry.COL_PRESSURE + " REAL NOT NULL, " +
+        WeatherEntry.COL_WIND_SPEED + " REAL NOT NULL, " +
+        WeatherEntry.COL_DEGREES + " REAL NOT NULL, " +
 
         // Set up the location column as a foreign key to location table.
-            " FOREIGN KEY (" + WeatherEntry.COL_LOC_KEY + ") REFERENCES " +
+        " FOREIGN KEY (" + WeatherEntry.COL_LOC_KEY + ") REFERENCES " +
         LocationEntry.TABLE_NAME + " (" + LocationEntry._ID + "), " +
 
         /* To assure the application has just one weather entry per day per
          * location, it's created with a UNIQUE constraint, and with a REPLACE
          * strategy. */
-            " UNIQUE (" + WeatherEntry.COL_DATE + ", " +
-            WeatherEntry.COL_LOC_KEY + ") ON CONFLICT REPLACE);";
+        " UNIQUE (" + WeatherEntry.COL_DATE + ", " +
+        WeatherEntry.COL_LOC_KEY + ") ON CONFLICT REPLACE);";
 
     sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
   }
