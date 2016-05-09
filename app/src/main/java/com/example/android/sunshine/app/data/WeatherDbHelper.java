@@ -31,6 +31,7 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
   private static final int DATABASE_VERSION = 2;
 
   static final String DATABASE_NAME = "weather.db";
+  static final String LOG_TAG = WeatherDbHelper.class.getSimpleName();
 
   public WeatherDbHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,17 +41,9 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase sqLiteDatabase) {
     final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " +
         WeatherEntry.TABLE_NAME + " (" +
-
-        /* Why AutoIncrement here, and not above? Unique keys will be
-         * auto-generated in either case. But for weather forecasting, it's
-         * reasonable to assume the user will want information for a certain
-         * date and all dates *following* it, so the forecast data should be
-         * sorted accordingly. */
         WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-
         // the ID of the location that's associated with this weather data
         WeatherEntry.COL_LOC_KEY + " INTEGER NOT NULL, " +
-
         WeatherEntry.COL_DATE + " INTEGER NOT NULL, " +
         WeatherEntry.COL_SHORT_DESC + " TEXT NOT NULL, " +
         WeatherEntry.COL_WEATHER_ID + " INTEGER NOT NULL," +
@@ -61,17 +54,26 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
         WeatherEntry.COL_WIND_SPEED + " REAL NOT NULL, " +
         WeatherEntry.COL_DEGREES + " REAL NOT NULL, " +
 
-        // Set up the location column as a foreign key to location table.
+        // Set the location column as a foreign key to the location table.
         " FOREIGN KEY (" + WeatherEntry.COL_LOC_KEY + ") REFERENCES " +
         LocationEntry.TABLE_NAME + " (" + LocationEntry._ID + "), " +
 
-        /* To assure the application has just one weather entry per day per
-         * location, it's created with a UNIQUE constraint, and with a REPLACE
-         * strategy. */
+        // Ensure one weather entry per location, per day.
         " UNIQUE (" + WeatherEntry.COL_DATE + ", " +
         WeatherEntry.COL_LOC_KEY + ") ON CONFLICT REPLACE);";
 
+    final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " +
+        LocationEntry.TABLE_NAME + " ( " +
+        LocationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        LocationEntry.COL_LOC_SETTING + " TEXT NOT NULL, " +
+        LocationEntry.COL_CITY_NAME + " TEXT NOT NULL, " +
+        LocationEntry.COL_LATITUDE + " REAL NOT NULL, " +
+        LocationEntry.COL_LONGITUDE + " REAL NOT NULL, " +
+        " UNIQUE ( " + LocationEntry.COL_LOC_SETTING
+        + " ) ON CONFLICT REPLACE " + " );";
+
     sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
+    sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
   }
 
   @Override
