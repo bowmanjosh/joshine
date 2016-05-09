@@ -3,9 +3,7 @@ package com.example.android.sunshine.app.data;
 import android.test.AndroidTestCase;
 
 public class TestPractice extends AndroidTestCase {
-  /*
-      This gets run before every test.
-   */
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -19,6 +17,7 @@ public class TestPractice extends AndroidTestCase {
 
     assertEquals("X should be equal", a, c);
     assertTrue("Y should be true", d > a);
+    //noinspection ConstantConditions
     assertFalse("Z should be false", a == b);
 
     if (b > d) {
