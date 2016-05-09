@@ -57,8 +57,8 @@ public abstract class PollingCheck {
     Assert.fail("unexpected timeout");
   }
 
-  public static void check(CharSequence message, long timeout, Callable<Boolean> condition)
-      throws Exception {
+  public static void check(CharSequence message, long timeout,
+      Callable<Boolean> condition) throws Exception {
     while (timeout > 0) {
       if (condition.call()) {
         return;
