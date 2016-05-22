@@ -65,14 +65,13 @@ public class TestUtilities extends AndroidTestCase {
    * Creates dummy location data. The data created is for North Pole, Alaska.
    */
   static ContentValues createNorthPoleLocationValues() {
-    ContentValues testValues = new ContentValues();
-    testValues.put(WeatherContract.LocationEntry.COL_LOC_SETTING,
-        TEST_LOCATION);
-    testValues.put(WeatherContract.LocationEntry.COL_CITY_NAME, "North Pole");
-    testValues.put(WeatherContract.LocationEntry.COL_LATITUDE, 64.7488);
-    testValues.put(WeatherContract.LocationEntry.COL_LONGITUDE, -147.353);
+    ContentValues values = new ContentValues();
+    values.put(WeatherContract.LocationEntry.COL_LOC_SETTING, TEST_LOCATION);
+    values.put(WeatherContract.LocationEntry.COL_CITY_NAME, "North Pole");
+    values.put(WeatherContract.LocationEntry.COL_LATITUDE, 64.7488);
+    values.put(WeatherContract.LocationEntry.COL_LONGITUDE, -147.353);
 
-    return testValues;
+    return values;
   }
 
   static long insertNorthPoleLocationValues(Context context) {
