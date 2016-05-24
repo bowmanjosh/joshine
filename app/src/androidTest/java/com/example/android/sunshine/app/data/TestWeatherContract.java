@@ -17,10 +17,9 @@ package com.example.android.sunshine.app.data;
 
 import android.test.AndroidTestCase;
 
-/*
-    Students: This is NOT a complete test for the WeatherContract --- just
-    for the functions
-    that we expect you to write.
+/**
+ * Students: This is NOT a complete test for the WeatherContract --- just for
+ * the functions that we expect you to write.
  */
 public class TestWeatherContract extends AndroidTestCase {
 

@@ -23,44 +23,31 @@ import android.test.AndroidTestCase;
 import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
-/*
-    Note: This is not a complete set of tests of the Sunshine
-    ContentProvider, but it does test
-    that at least the basic functionality has been implemented correctly.
-
-    Students: Uncomment the tests in this class as you implement the
-    functionality in your
-    ContentProvider to make sure that you've implemented things reasonably
-    correctly.
+/**
+ * Note: This is not a complete set of tests of the Sunshine ContentProvider,
+ * but it does test that at least the basic functionality has been implemented
+ * correctly.
+ * <p>
+ * Students: Uncomment the tests in this class as you implement the
+ * functionality in your ContentProvider to make sure that you've implemented
+ * things reasonably correctly.
  */
 public class TestProvider extends AndroidTestCase {
 
   public static final String LOG_TAG = TestProvider.class.getSimpleName();
 
-  /*
-     This helper function deletes all records from both database tables using
-      the ContentProvider.
-     It also queries the ContentProvider to make sure that the database has
-     been successfully
-     deleted, so it cannot be used until the Query and Delete functions have
-     been written
-     in the ContentProvider.
-
-     Students: Replace the calls to deleteAllRecordsFromDB with this one
-     after you have written
-     the delete functionality in the ContentProvider.
+  /**
+   * This helper function deletes all records from both database tables using
+   * the ContentProvider. It also queries the ContentProvider to make sure that
+   * the database has been successfully deleted, so it cannot be used until the
+   * Query and Delete functions have been written in the ContentProvider.
+   * <p>
+   * Students: Replace the calls to deleteAllRecordsFromDB with this one after
+   * you have written the delete functionality in the ContentProvider.
    */
   public void deleteAllRecordsFromProvider() {
-    mContext.getContentResolver().delete(
-        WeatherEntry.CONTENT_URI,
-        null,
-        null
-    );
-    mContext.getContentResolver().delete(
-        LocationEntry.CONTENT_URI,
-        null,
-        null
-    );
+    mContext.getContentResolver().delete(WeatherEntry.CONTENT_URI, null, null);
+    mContext.getContentResolver().delete(LocationEntry.CONTENT_URI, null, null);
 
     Cursor cursor = mContext.getContentResolver().query(
         WeatherEntry.CONTENT_URI,
@@ -69,8 +56,11 @@ public class TestProvider extends AndroidTestCase {
         null,
         null
     );
-    assertEquals("Error: Records not deleted from Weather table during " +
-        "delete", 0, cursor.getCount());
+    if (cursor == null) {
+      throw new NullPointerException("Attempt to create cursor failed.");
+    }
+    assertEquals("Error: Records not deleted from Weather table during delete",
+        0, cursor.getCount());
     cursor.close();
 
     cursor = mContext.getContentResolver().query(
@@ -80,17 +70,19 @@ public class TestProvider extends AndroidTestCase {
         null,
         null
     );
-    assertEquals("Error: Records not deleted from Location table during " +
-        "delete", 0, cursor.getCount());
+    if (cursor == null) {
+      throw new NullPointerException("Attempt to create cursor failed.");
+    }
+    assertEquals("Error: Records not deleted from Location table during delete",
+        0, cursor.getCount());
     cursor.close();
   }
 
-  /*
-     This helper function deletes all records from both database tables using
-      the database
-     functions only.  This is designed to be used to reset the state of the
-     database until the
-     delete functionality is available in the ContentProvider.
+  /**
+   * This helper function deletes all records from both database tables using
+   * the database functions only.  This is designed to be used to reset the
+   * state of the database until the delete functionality is available in the
+   * ContentProvider.
    */
   public void deleteAllRecordsFromDB() {
     WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
@@ -101,10 +93,9 @@ public class TestProvider extends AndroidTestCase {
     db.close();
   }
 
-  /*
-      Student: Refactor this function to use the deleteAllRecordsFromProvider
-       functionality once
-      you have implemented delete functionality there.
+  /**
+   * Student: Refactor this function to use the deleteAllRecordsFromProvider
+   * functionality once you have implemented delete functionality there.
    */
   public void deleteAllRecords() {
     deleteAllRecordsFromDB();
@@ -534,25 +525,24 @@ public class TestProvider extends AndroidTestCase {
     ContentValues[] returnContentValues = new
         ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
 
-    for (int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, currentTestDate
-        += millisecondsInADay) {
+    for (int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++,
+        currentTestDate += millisecondsInADay) {
       ContentValues weatherValues = new ContentValues();
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY,
+      weatherValues.put(WeatherContract.WeatherEntry.COL_LOC_KEY,
           locationRowId);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE,
-          currentTestDate);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, 1.1);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, 1.2 + 0
-      .01 * (float) i);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, 1.3 - 0
-      .01 * (float) i);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, 75 + i);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, 65 - i);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+      weatherValues.put(WeatherContract.WeatherEntry.COL_DATE, currentTestDate);
+      weatherValues.put(WeatherContract.WeatherEntry.COL_DEGREES, 1.1);
+      weatherValues.put(WeatherContract.WeatherEntry.COL_HUMIDITY,
+          (1.2 + 0.01 * (float) i));
+      weatherValues.put(WeatherContract.WeatherEntry.COL_PRESSURE,
+          (1.3 - 0.01 * (float) i));
+      weatherValues.put(WeatherContract.WeatherEntry.COL_MAX_TEMP, (75 + i));
+      weatherValues.put(WeatherContract.WeatherEntry.COL_MIN_TEMP, (65 - i));
+      weatherValues.put(WeatherContract.WeatherEntry.COL_SHORT_DESC,
           "Asteroids");
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, 5.5 +
-          0.2 * (float) i);
-      weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, 321);
+      weatherValues.put(WeatherContract.WeatherEntry.COL_WIND_SPEED,
+          (5.5 + 0.2 * (float) i));
+      weatherValues.put(WeatherContract.WeatherEntry.COL_WEATHER_ID, 321);
       returnContentValues[i] = weatherValues;
     }
     return returnContentValues;

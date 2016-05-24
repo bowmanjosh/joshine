@@ -18,14 +18,12 @@ package com.example.android.sunshine.app.data;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-/*
-    Uncomment this class when you are ready to test your UriMatcher.  Note
-    that this class utilizes
-    constants that are declared with package protection inside of the
-    UriMatcher, which is why
-    the test must be in the same data package as the Android app code.  Doing
-     the test this way is
-    a nice compromise between data hiding and testability.
+/**
+ * Uncomment this class when you are ready to test your UriMatcher.  Note that
+ * this class utilizes constants that are declared with package protection
+ * inside of the UriMatcher, which is why the test must be in the same data
+ * package as the Android app code.  Doing the test this way is a nice
+ * compromise between data hiding and testability.
  */
 public class TestUriMatcher extends AndroidTestCase {
   private static final String LOCATION_QUERY = "London, UK";

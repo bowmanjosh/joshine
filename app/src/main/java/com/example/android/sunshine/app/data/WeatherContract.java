@@ -61,12 +61,10 @@ public class WeatherContract {
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
 
-    public static final String CONTENT_TYPE =
-        ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/"
-            + PATH_LOCATION;
-    public static final String CONTENT_ITEM_TYPE =
-        ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/"
-            + PATH_LOCATION;
+    public static final String CONTENT_TYPE = ContentResolver
+        .CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+    public static final String CONTENT_ITEM_TYPE = ContentResolver
+        .CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
 
     public static Uri buildLocationUri(long id) {
       return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -99,19 +97,17 @@ public class WeatherContract {
     // Windspeed is stored as a float representing windspeed  mph
     public static final String COL_WIND_SPEED = "wind";
 
-    // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
+    // Degrees are meteorological degrees. Stored as floats.
     public static final String COL_DEGREES = "degrees";
 
     // Boilerplate from Google re: ContentProviders.
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
 
-    public static final String CONTENT_TYPE =
-        ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/"
-            + PATH_WEATHER;
-    public static final String CONTENT_ITEM_TYPE =
-        ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/"
-            + PATH_WEATHER;
+    public static final String CONTENT_TYPE = ContentResolver
+        .CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
+    public static final String CONTENT_ITEM_TYPE = ContentResolver
+        .CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
 
     public static Uri buildWeatherUri(long id) {
@@ -129,7 +125,7 @@ public class WeatherContract {
         String locationSetting, long startDate) {
       long normalizedDate = normalizeDate(startDate);
       return CONTENT_URI.buildUpon().appendPath(locationSetting)
-          .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate))
+          .appendQueryParameter(COL_DATE, Long.toString(normalizedDate))
           .build();
     }
 
@@ -148,7 +144,7 @@ public class WeatherContract {
     }
 
     public static long getStartDateFromUri(Uri uri) {
-      String dateString = uri.getQueryParameter(COLUMN_DATE);
+      String dateString = uri.getQueryParameter(COL_DATE);
       if (null != dateString && dateString.length() > 0)
         return Long.parseLong(dateString);
       else
