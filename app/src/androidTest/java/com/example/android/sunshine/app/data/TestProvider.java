@@ -15,7 +15,10 @@
  */
 package com.example.android.sunshine.app.data;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -27,7 +30,7 @@ import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
  * Note: This is not a complete set of tests of the Sunshine ContentProvider,
  * but it does test that at least the basic functionality has been implemented
  * correctly.
- * <p>
+ * <p/>
  * Students: Uncomment the tests in this class as you implement the
  * functionality in your ContentProvider to make sure that you've implemented
  * things reasonably correctly.
@@ -41,7 +44,7 @@ public class TestProvider extends AndroidTestCase {
    * the ContentProvider. It also queries the ContentProvider to make sure that
    * the database has been successfully deleted, so it cannot be used until the
    * Query and Delete functions have been written in the ContentProvider.
-   * <p>
+   * <p/>
    * Students: Replace the calls to deleteAllRecordsFromDB with this one after
    * you have written the delete functionality in the ContentProvider.
    */
@@ -109,43 +112,32 @@ public class TestProvider extends AndroidTestCase {
     deleteAllRecords();
   }
 
-    /*
-        This test checks to make sure that the content provider is registered
-         correctly.
-        Students: Uncomment this test to make sure you've correctly
-        registered the WeatherProvider.
-     */
-  //    public void testProviderRegistry() {
-  //        PackageManager pm = mContext.getPackageManager();
-  //
-  //        // We define the component name based on the package name from
-  // the context and the
-  //        // WeatherProvider class.
-  //        ComponentName componentName = new ComponentName(mContext
-  // .getPackageName(),
-  //                WeatherProvider.class.getName());
-  //        try {
-  //            // Fetch the provider info using the component name from the
-  // PackageManager
-  //            // This throws an exception if the provider isn't registered.
-  //            ProviderInfo providerInfo = pm.getProviderInfo(componentName,
-  // 0);
-  //
-  //            // Make sure that the registered authority matches the
-  // authority from the Contract.
-  //            assertEquals("Error: WeatherProvider registered with
-  // authority: " + providerInfo.authority +
-  //                    " instead of authority: " + WeatherContract
-  // .CONTENT_AUTHORITY,
-  //                    providerInfo.authority, WeatherContract
-  // .CONTENT_AUTHORITY);
-  //        } catch (PackageManager.NameNotFoundException e) {
-  //            // I guess the provider isn't registered correctly.
-  //            assertTrue("Error: WeatherProvider not registered at " +
-  // mContext.getPackageName(),
-  //                    false);
-  //        }
-  //    }
+  public void testProviderRegistry() {
+    PackageManager pm = mContext.getPackageManager();
+
+    // We define the component name based on the package name from
+    // the context and the
+    // WeatherProvider class.
+    ComponentName componentName = new ComponentName(mContext.getPackageName(),
+        WeatherProvider.class.getName());
+
+    try {
+      // Fetch the provider info using the component name from the
+      // PackageManager. Throws an exception if the provider isn't registered.
+      ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
+
+      // Make sure that the registered authority matches the authority from the
+      // Contract.
+      assertEquals("Error: WeatherProvider registered with authority:"
+              + providerInfo.authority + " instead of authority: "
+              + WeatherContract.CONTENT_AUTHORITY,
+          providerInfo.authority, WeatherContract.CONTENT_AUTHORITY);
+    } catch (PackageManager.NameNotFoundException e) {
+      // I guess the provider isn't registered correctly.
+      assertTrue("Error: WeatherProvider not registered at " +
+          mContext.getPackageName(), false);
+    }
+  }
 
     /*
             This test doesn't touch the database.  It verifies that the
