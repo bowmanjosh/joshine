@@ -27,6 +27,8 @@ import android.support.annotation.NonNull;
 
 public class WeatherProvider extends ContentProvider {
 
+  static final String LOG_TAG = WeatherProvider.class.getSimpleName();
+
   // The URI Matcher used by this content provider.
   private static final UriMatcher sUriMatcher = buildUriMatcher();
   private WeatherDbHelper mOpenHelper;
@@ -169,9 +171,8 @@ public class WeatherProvider extends ContentProvider {
 
   @Override
   public Cursor query(@NonNull Uri uri, String[] projection, String selection,
-      String[] selectionArgs,
-      String sortOrder) {
-    /* This switch statement parses the URI and does the appropriate query. */
+      String[] selectionArgs, String sortOrder) {
+
     Cursor retCursor;
     switch (sUriMatcher.match(uri)) {
       // "weather/*/*"
@@ -211,9 +212,9 @@ public class WeatherProvider extends ContentProvider {
         );
         break;
       }
-
-      default:
+      default: {
         throw new UnsupportedOperationException("Unknown uri: " + uri);
+      }
     }
     retCursor.setNotificationUri(getContext().getContentResolver(), uri);
     return retCursor;
@@ -234,16 +235,35 @@ public class WeatherProvider extends ContentProvider {
         normalizeDate(values);
         long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null,
             values);
-        if (_id > 0)
+        if (_id >= 0) {
           returnUri = WeatherContract.WeatherEntry.buildWeatherUri(_id);
-        else
+        } else {
           throw new android.database.SQLException("Failed to insert row into "
               + uri);
+        }
         break;
       }
-      default:
+      case LOCATION: {
+        long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null,
+            values);
+        if (_id >= 0) {
+          returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+        } else {
+          throw new android.database.SQLException("Failed to insert row into "
+              + uri);
+        }
+        break;
+      }
+      default: {
         throw new UnsupportedOperationException("Unknown uri: " + uri);
+      }
     }
+
+    /**
+     * Reminder: notifyChange() needs to be passed the Uri that was passed
+     * *into* this function, not the one we have constructed to return. If we
+     * use the one we plan to return, listeners will not be notified.
+     */
     getContext().getContentResolver().notifyChange(uri, null);
     return returnUri;
   }
@@ -251,22 +271,37 @@ public class WeatherProvider extends ContentProvider {
   @Override
   public int delete(@NonNull Uri uri, String selection, String[]
       selectionArgs) {
-    // Student: Start by getting a writable database
 
-    // Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we
-    // are going to
-    // handle.  If it doesn't match these, throw an
-    // UnsupportedOperationException.
+    final String tableName;
+    switch (sUriMatcher.match(uri)) {
+      case WEATHER: {
+        tableName = WeatherContract.WeatherEntry.TABLE_NAME;
+        break;
+      }
+      case LOCATION: {
+        tableName = WeatherContract.LocationEntry.TABLE_NAME;
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unsupported Uri: " + uri);
+      }
+    }
 
     // Student: A null value deletes all rows.  In my implementation of this,
-    // I only notified
-    // the uri listeners (using the content resolver) if the rowsDeleted != 0
-    // or the selection
-    // is null.
-    // Oh, and you should notify the listeners here.
+    // I only notified the uri listeners (using the content resolver) if the
+    // rowsDeleted != 0 or the selection is null. Oh, and you should notify the
+    // listeners here.
+    final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+    if (selection == null) {
+      selection = "1";
+    }
+    final int rowsDeleted = db.delete(tableName, selection, selectionArgs);
+    if (rowsDeleted > 0) {
+      getContext().getContentResolver().notifyChange(uri, null);
+    }
 
     // Student: return the actual rows deleted
-    return 0;
+    return rowsDeleted;
   }
 
   private void normalizeDate(ContentValues values) {
@@ -285,7 +320,31 @@ public class WeatherProvider extends ContentProvider {
     // Student: This is a lot like the delete function.  We return the number
     // of rows impacted
     // by the update.
-    return 0;
+
+    final String tableName;
+    switch (sUriMatcher.match(uri)) {
+      case WEATHER: {
+        tableName = WeatherContract.WeatherEntry.TABLE_NAME;
+        break;
+      }
+      case LOCATION: {
+        tableName = WeatherContract.LocationEntry.TABLE_NAME;
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unsupported Uri: " + uri);
+      }
+    }
+
+    // This chain goes all the way to the SQLite update() call, which returns
+    // an int, which is the number of rows we affected with the call.
+    int rowsUpdated = mOpenHelper.getWritableDatabase().update(tableName,
+        values,
+        selection, selectionArgs);
+    if (rowsUpdated > 0) {
+      getContext().getContentResolver().notifyChange(uri, null);
+    }
+    return rowsUpdated;
   }
 
   @Override
