@@ -49,8 +49,10 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         new String[]{locSetting},
         null);
 
-    long rowId;
-    if (cursor != null && cursor.moveToFirst()) {
+    long rowId = -1;
+    if (cursor == null) {
+      return rowId;
+    } else if (cursor.moveToFirst()) {
       // We already have this location
       rowId = cursor.getLong(cursor.getColumnIndex(
           WeatherContract.LocationEntry._ID));
@@ -66,9 +68,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
       rowId = ContentUris.parseId(uri);
     }
 
-    if (cursor != null) {
-      cursor.close();
-    }
+    cursor.close();
     return rowId;
   }
 
