@@ -1,13 +1,18 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+
+import com.example.android.sunshine.app.data.WeatherContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +36,40 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
       ArrayAdapter<String> forecastAdapter) {
     mContext = context;
     mForecastAdapter = forecastAdapter;
+  }
+
+  long addLocation(String locSetting, String cityName,
+      double latitude, double longitude) {
+
+    Cursor cursor = mContext.getContentResolver().query(
+        WeatherContract.LocationEntry.CONTENT_URI,
+        new String[]{WeatherContract.LocationEntry._ID},
+        WeatherContract.LocationEntry.TABLE_NAME
+            + "." + WeatherContract.LocationEntry.COL_LOC_SETTING + " = ?",
+        new String[]{locSetting},
+        null);
+
+    long rowId;
+    if (cursor != null && cursor.moveToFirst()) {
+      // We already have this location
+      rowId = cursor.getLong(cursor.getColumnIndex(
+          WeatherContract.LocationEntry._ID));
+    } else {
+      // We don't have this location; insert it.
+      ContentValues values = new ContentValues();
+      values.put(WeatherContract.LocationEntry.COL_LOC_SETTING, locSetting);
+      values.put(WeatherContract.LocationEntry.COL_CITY_NAME, cityName);
+      values.put(WeatherContract.LocationEntry.COL_LATITUDE, latitude);
+      values.put(WeatherContract.LocationEntry.COL_LONGITUDE, longitude);
+      Uri uri = mContext.getContentResolver()
+          .insert(WeatherContract.LocationEntry.CONTENT_URI, values);
+      rowId = ContentUris.parseId(uri);
+    }
+
+    if (cursor != null) {
+      cursor.close();
+    }
+    return rowId;
   }
 
   // GOOG helper: convert the API's Unix time to something human-readable.
