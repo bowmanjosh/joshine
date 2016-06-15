@@ -181,37 +181,32 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     Log.v(LOG_TAG, "Rows inserted: " + rowsInserted + ". valuesVector size: "
         + valuesVector.size() + ".");
 
-
     // FIXME: Once the Provider code is finished, refactor this.
-    String[] resultStrs = new String[weatherArray.length()];
-    for (int i = 0; i < weatherArray.length(); i++) {
-      String day;
-      String description;
-      String highAndLow;
+    Cursor cursor = mContext.getContentResolver().query(
+        WeatherEntry.buildWeatherLocationWithStartDate(locSetting,
+            System.currentTimeMillis()),
+        null, null, null, WeatherEntry.COL_DATE + " ASC");
+    int colDate = cursor.getColumnIndex(WeatherEntry.COL_DATE);
+    int colShortDesc = cursor.getColumnIndex(WeatherEntry.COL_SHORT_DESC);
+    int colMaxTemperature = cursor.getColumnIndex(WeatherEntry.COL_MAX_TEMP);
+    int colMinTemperature = cursor.getColumnIndex(WeatherEntry.COL_MIN_TEMP);
+    String[] resultStrings = new String[cursor.getCount()];
+    cursor.moveToFirst();
+    for (int i = 0; i < cursor.getCount(); i++) {
+      String day = getReadableDateString(cursor.getLong(colDate));
+      String description = cursor.getString(colShortDesc);
+      double maxTemperature = cursor.getDouble(colMaxTemperature);
+      double minTemperature = cursor.getDouble(colMinTemperature);
 
-      // Get the JSON object representing the day
-      JSONObject dayForecast = weatherArray.getJSONObject(i);
-
-      // The date/time comes from OWM as a long. Make it human-readable.
-      long dateTime;
-      dateTime = dayTime.setJulianDay(julianStartDay + i);
-      day = getReadableDateString(dateTime);
-
-      JSONObject weatherObject = dayForecast
-          .getJSONArray(OWM_WEATHER).getJSONObject(0);
-      description = weatherObject.getString("main");
-
-      // OWM temperatures come in a object named "temp". Bad naming strategy.
-      JSONObject temperatureObject = dayForecast
-          .getJSONObject(OWM_TEMPERATURE);
-      double high = temperatureObject.getDouble(OWM_TEMPERATURE_MAX);
-      double low = temperatureObject.getDouble(OWM_TEMPERATURE_MIN);
-
-      highAndLow = formatHighLows(high, low);
-      resultStrs[i] = day + " || " + description + " || " + highAndLow;
+      resultStrings[i] = day + " || " + description + " || "
+          + formatHighLows(maxTemperature, minTemperature);
+      cursor.moveToNext();
     }
+    Log.v(LOG_TAG, "Cursor size: " + cursor.getCount()
+        + ". Last result string: " + resultStrings[resultStrings.length - 1]);
+    cursor.close();
 
-    return resultStrs;
+    return resultStrings;
   }
 
   @Override
