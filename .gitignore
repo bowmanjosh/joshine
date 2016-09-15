@@ -41,4 +41,4 @@ project.properties
 build/
 
 # Secrets
-/app/src/main/res/values/private.xml
+/app/src/main/res/values/privatey.xml
