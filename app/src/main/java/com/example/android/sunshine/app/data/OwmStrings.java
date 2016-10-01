@@ -1,9 +1,5 @@
 package com.example.android.sunshine.app.data;
 
-/**
- * Created by Josh on 10/1/2016.
- */
-
 public final class OwmStrings {
     public static final String OWM_CITY = "city";
     public static final String OWM_CITY_NAME = "name";

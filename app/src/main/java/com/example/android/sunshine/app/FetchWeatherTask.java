@@ -31,13 +31,13 @@ import java.util.Vector;
 
 class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
-  static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-  static final int NUM_DAYS = 14;
+  private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+  private static final int NUM_DAYS = 14;
 
   private ArrayAdapter<String> mForecastAdapter;
   private final Context mContext;
 
-  public FetchWeatherTask(Context context,
+  FetchWeatherTask(Context context,
       ArrayAdapter<String> forecastAdapter) {
     mContext = context;
     mForecastAdapter = forecastAdapter;
@@ -163,11 +163,15 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     Log.v(LOG_TAG, "Rows inserted: " + rowsInserted + ". valuesVector size: "
         + valuesVector.size() + ".");
 
-    // FIXME: Once the Provider code is finished, refactor this.
     Cursor cursor = mContext.getContentResolver().query(
-        WeatherEntry.buildWeatherLocationWithStartDate(locSetting,
-            System.currentTimeMillis()),
+        WeatherEntry.buildWeatherLocationWithStartDate(locSetting, System.currentTimeMillis()),
         null, null, null, WeatherEntry.COL_DATE + " ASC");
+    // TODO: I think the "return null" here makes doInBackground() fail silently. Not cool.
+    if (cursor == null) {
+      Log.e(LOG_TAG, "Database returned null for query of \'" + locSetting + "\' and start date.");
+      return null;
+    }
+
     int colDate = cursor.getColumnIndex(WeatherEntry.COL_DATE);
     int colShortDesc = cursor.getColumnIndex(WeatherEntry.COL_SHORT_DESC);
     int colMaxTemperature = cursor.getColumnIndex(WeatherEntry.COL_MAX_TEMP);
