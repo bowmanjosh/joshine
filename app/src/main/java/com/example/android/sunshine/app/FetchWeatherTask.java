@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
+import static com.example.android.sunshine.app.data.OwmStrings.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,29 +29,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
   static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
   static final int NUM_DAYS = 14;
-
-  static final String OWM_CITY = "city";
-  static final String OWM_CITY_NAME = "name";
-  static final String OWM_CITY_COORD = "coord";
-  static final String OWM_COORD_LAT = "lat";
-  static final String OWM_COORD_LON = "lon";
-
-  static final String OWM_LIST = "list";
-  static final String OWM_DATETIME = "dt";
-  static final String OWM_TEMPERATURE = "temp";
-  static final String OWM_TEMPERATURE_MAX = "max";
-  static final String OWM_TEMPERATURE_MIN = "min";
-  static final String OWM_PRESSURE = "pressure";
-  static final String OWM_HUMIDITY = "humidity";
-  static final String OWM_WEATHER = "weather";
-  static final String OWM_WEATHER_SHORT_DESC = "main";
-  static final String OWM_WEATHER_ID = "id";
-  static final String OWM_WIND_SPEED = "speed";
-  static final String OWM_WIND_DEG = "deg";
 
   private ArrayAdapter<String> mForecastAdapter;
   private final Context mContext;
