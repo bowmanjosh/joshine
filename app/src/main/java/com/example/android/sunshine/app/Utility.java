@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utility {
   public static String getPreferredLocation(Context context) {
@@ -29,21 +30,19 @@ public class Utility {
         context.getString(R.string.pref_location_default));
   }
 
-  public static boolean isMetric(Context context) {
+  public static boolean isCelsius(Context context) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     return prefs.getString(context.getString(R.string.pref_units_key),
-        context.getString(R.string.pref_units_metric))
-        .equals(context.getString(R.string.pref_units_metric));
+        context.getString(R.string.str_celsius_key))
+        .equals(context.getString(R.string.str_celsius_key));
   }
 
-  static String formatTemperature(double temperature, boolean isMetric) {
-    double temp;
-    if ( !isMetric ) {
-      temp = 9*temperature/5+32;
-    } else {
-      temp = temperature;
+  static String formatTemperature(double temperature, boolean isCelsius) {
+    if ( !isCelsius ) {
+      temperature = temperature * 9 / 5 + 32;
     }
-    return String.format("%.0f", temp);
+
+    return String.format(Locale.getDefault(), "%.0f", temperature);
   }
 
   static String formatDate(long dateInMillis) {
