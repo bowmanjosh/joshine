@@ -1,16 +1,13 @@
 package com.example.android.sunshine.app;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
@@ -26,21 +23,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
   private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
   private static final int NUM_DAYS = 14;
 
-  private ArrayAdapter<String> mForecastAdapter;
   private final Context mContext;
 
-  FetchWeatherTask(Context context,
-      ArrayAdapter<String> forecastAdapter) {
+  FetchWeatherTask(Context context) {
     mContext = context;
-    mForecastAdapter = forecastAdapter;
   }
 
   long addLocation(String locSetting, String cityName,
@@ -66,8 +59,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
       values.put(LocationEntry.COL_CITY_NAME, cityName);
       values.put(LocationEntry.COL_LATITUDE, latitude);
       values.put(LocationEntry.COL_LONGITUDE, longitude);
-      Uri uri = mContext.getContentResolver()
-          .insert(LocationEntry.CONTENT_URI, values);
+      Uri uri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, values);
       rowId = ContentUris.parseId(uri);
     }
 
@@ -75,31 +67,8 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     return rowId;
   }
 
-  // GOOG helper: convert the API's Unix time to something human-readable.
-  @SuppressLint("SimpleDateFormat")
-  private String getReadableDateString(long time) {
-    SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-    return shortenedDateFormat.format(time);
-  }
-
-  /* GOOG helper: Prepare the weather high/lows for presentation.
-   * With addition of user preference, this method now ruined by Josh. */
-  private String formatHighLows(double high, double low) {
-    // Find what units the user wants, convert data if necessary.
-    String units = PreferenceManager.getDefaultSharedPreferences(mContext)
-        .getString(mContext.getString(R.string.pref_units_key),
-            mContext.getString(R.string.str_celsius_key));
-    if (units.equals(mContext.getString(R.string.str_fahrenheit_key))) {
-      high = high * 1.8 + 32;
-      low = low * 1.8 + 32;
-    }
-
-    // For presentation, assume the user doesn't care about tenths of a degree.
-    return Math.round(high) + " / " + Math.round(low);
-  }
-
   @SuppressWarnings("deprecation")
-  private String[] getWeatherDataFromJson(String forecastJsonStr,
+  private void getWeatherDataFromJson(String forecastJsonStr,
       String locSetting) throws JSONException {
 
     JSONObject forecastJson = new JSONObject(forecastJsonStr);
@@ -111,8 +80,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     // GOOG: do something weird with dates and times.
     Time dayTime = new Time();
     dayTime.setToNow();
-    int julianStartDay = Time
-        .getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+    int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
 
     // now we work exclusively in UTC (hmm, yes, ok)
     // NOTE: In the Google code they use this to normalize datetimes. I think.
@@ -135,25 +103,21 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     for (int i = 0; i < weatherArray.length(); i++) {
       ContentValues values = new ContentValues();
       JSONObject dayJson = weatherArray.getJSONObject(i);
-      JSONObject weatherObject = dayJson.getJSONArray(OWM_WEATHER)
-          .getJSONObject(0);
+      JSONObject weatherObject = dayJson.getJSONArray(OWM_WEATHER).getJSONObject(0);
 
       values.put(WeatherEntry.COL_LOC_KEY, locationRowId);
-      values.put(WeatherEntry.COL_DATE, dayTime
-          .setJulianDay(julianStartDay + i));
-      values.put(WeatherEntry.COL_SHORT_DESC, weatherObject
-          .getString(OWM_WEATHER_SHORT_DESC));
-      values.put(WeatherEntry.COL_WEATHER_ID, weatherObject
-          .getInt(OWM_WEATHER_ID));
-      values.put(WeatherEntry.COL_MIN_TEMP, dayJson
-          .getJSONObject(OWM_TEMPERATURE).getDouble(OWM_TEMPERATURE_MIN));
-      values.put(WeatherEntry.COL_MAX_TEMP, dayJson
-          .getJSONObject(OWM_TEMPERATURE).getDouble(OWM_TEMPERATURE_MAX));
+      values.put(WeatherEntry.COL_DATE, dayTime.setJulianDay(julianStartDay + i));
+      values.put(WeatherEntry.COL_SHORT_DESC, weatherObject.getString(OWM_WEATHER_SHORT_DESC));
+      values.put(WeatherEntry.COL_WEATHER_ID, weatherObject.getInt(OWM_WEATHER_ID));
+      values.put(WeatherEntry.COL_MIN_TEMP,
+          dayJson.getJSONObject(OWM_TEMPERATURE).getDouble(OWM_TEMPERATURE_MIN));
+      values.put(WeatherEntry.COL_MAX_TEMP,
+          dayJson.getJSONObject(OWM_TEMPERATURE).getDouble(OWM_TEMPERATURE_MAX));
       values.put(WeatherEntry.COL_HUMIDITY, dayJson.getDouble(OWM_HUMIDITY));
       values.put(WeatherEntry.COL_PRESSURE, dayJson.getDouble(OWM_PRESSURE));
-      values.put(WeatherEntry.COL_WIND_SPEED, dayJson
-          .getDouble(OWM_WIND_SPEED));
+      values.put(WeatherEntry.COL_WIND_SPEED, dayJson.getDouble(OWM_WIND_SPEED));
       values.put(WeatherEntry.COL_DEGREES, dayJson.getDouble(OWM_WIND_DEG));
+
       valuesVector.add(values);
     }
     ContentValues[] valuesArray = new ContentValues[valuesVector.size()];
@@ -162,41 +126,10 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         WeatherEntry.CONTENT_URI, valuesArray);
     Log.v(LOG_TAG, "Rows inserted: " + rowsInserted + ". valuesVector size: "
         + valuesVector.size() + ".");
-
-    Cursor cursor = mContext.getContentResolver().query(
-        WeatherEntry.buildWeatherLocationWithStartDate(locSetting, System.currentTimeMillis()),
-        null, null, null, WeatherEntry.COL_DATE + " ASC");
-    // TODO: I think the "return null" here makes doInBackground() fail silently. Not cool.
-    if (cursor == null) {
-      Log.e(LOG_TAG, "Database returned null for query of \'" + locSetting + "\' and start date.");
-      return null;
-    }
-
-    int colDate = cursor.getColumnIndex(WeatherEntry.COL_DATE);
-    int colShortDesc = cursor.getColumnIndex(WeatherEntry.COL_SHORT_DESC);
-    int colMaxTemperature = cursor.getColumnIndex(WeatherEntry.COL_MAX_TEMP);
-    int colMinTemperature = cursor.getColumnIndex(WeatherEntry.COL_MIN_TEMP);
-    String[] resultStrings = new String[cursor.getCount()];
-    cursor.moveToFirst();
-    for (int i = 0; i < cursor.getCount(); i++) {
-      String day = getReadableDateString(cursor.getLong(colDate));
-      String description = cursor.getString(colShortDesc);
-      double maxTemperature = cursor.getDouble(colMaxTemperature);
-      double minTemperature = cursor.getDouble(colMinTemperature);
-
-      resultStrings[i] = day + " || " + description + " || "
-          + formatHighLows(maxTemperature, minTemperature);
-      cursor.moveToNext();
-    }
-    Log.v(LOG_TAG, "Cursor size: " + cursor.getCount()
-        + ". Last result string: " + resultStrings[resultStrings.length - 1]);
-    cursor.close();
-
-    return resultStrings;
   }
 
   @Override
-  protected String[] doInBackground(String... params) {
+  protected Void doInBackground(String... params) {
     if (params.length != 1) {
       Log.e(LOG_TAG, "Wrong parameter(s) passed to AsyncTask.");
       return null;
@@ -218,8 +151,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
           .appendQueryParameter("mode", "json")
           .appendQueryParameter("units", "metric")
           .appendQueryParameter("cnt", String.valueOf(NUM_DAYS))
-          .appendQueryParameter("APPID",
-              mContext.getString(R.string.private_owm_api));
+          .appendQueryParameter("APPID", mContext.getString(R.string.private_owm_api));
       URL url = new URL(uriBuilder.build().toString());
 
       // Create the request to OpenWeatherMap, and open the connection
@@ -247,7 +179,7 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
       forecastJsonStr = buffer.toString();
 
     } catch (IOException e) {
-      Log.e(LOG_TAG, "Error", e);
+      Log.e(LOG_TAG, "Error connecting to or retrieving API source data.", e);
       return null;
 
     } finally {
@@ -265,22 +197,12 @@ class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     }
 
     try {
-      return getWeatherDataFromJson(forecastJsonStr, params[0]);
+      getWeatherDataFromJson(forecastJsonStr, params[0]);
     } catch (JSONException e) {
       Log.e(LOG_TAG, e.getMessage(), e);
       e.printStackTrace();
     }
 
     return null;
-  }
-
-  @Override
-  protected void onPostExecute(String[] result) {
-    if (result != null) {
-      mForecastAdapter.clear();
-      for (String str : result) {
-        mForecastAdapter.add(str);
-      }
-    }
   }
 }
