@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
 
 /**
  * Fragment inside of MainActivity. Displays the weather forecast entries.
@@ -29,6 +30,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
   private static final int FORECAST_LOADER_ID = 1;
 
   ForecastAdapter mForecastAdapter;
+
+  private static final String[] FORECAST_PROJECTION = {
+      WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
+      WeatherEntry.COL_DATE,
+      WeatherEntry.COL_SHORT_DESC,
+      WeatherEntry.COL_MAX_TEMP,
+      WeatherEntry.COL_MIN_TEMP,
+      LocationEntry.COL_LOC_SETTING,
+      WeatherEntry.COL_WEATHER_ID,
+      LocationEntry.COL_LATITUDE,
+      LocationEntry.COL_LONGITUDE
+  };
 
   public ForecastFragment() {
   }
@@ -105,7 +118,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     return new CursorLoader(getActivity(),
         WeatherEntry.buildWeatherLocationWithStartDate(
             Utility.getPreferredLocation(getActivity()), System.currentTimeMillis()),
-        null,
+        FORECAST_PROJECTION,
         null,
         null,
         WeatherEntry.COL_DATE + " ASC");
