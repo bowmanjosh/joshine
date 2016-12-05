@@ -18,6 +18,7 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +26,16 @@ import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
+import java.util.Arrays;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
  */
-public class ForecastAdapter extends CursorAdapter {
-  public ForecastAdapter(Context context, Cursor c, int flags) {
+class ForecastAdapter extends CursorAdapter {
+  private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
+
+  ForecastAdapter(Context context, Cursor c, int flags) {
     super(context, c, flags);
   }
 
@@ -48,19 +53,15 @@ public class ForecastAdapter extends CursorAdapter {
       string.
    */
   private String convertCursorRowToUXFormat(Cursor cursor) {
-    // get row indices for our cursor
-    int idx_max_temp = cursor.getColumnIndex(WeatherEntry.COL_MAX_TEMP);
-    int idx_min_temp = cursor.getColumnIndex(WeatherEntry.COL_MIN_TEMP);
-    int idx_date = cursor.getColumnIndex(WeatherEntry.COL_DATE);
-    int idx_short_desc = cursor.getColumnIndex(WeatherEntry.COL_SHORT_DESC);
+    // WARNING: We are using the hacky "index" values from ForecastFragment in this method.
 
     String highAndLow = formatHighLows(
-        cursor.getDouble(idx_max_temp),
-        cursor.getDouble(idx_min_temp));
+        cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
+        cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
 
-    return Utility.formatDate(cursor.getLong(idx_date)) +
-        " - " + cursor.getString(idx_short_desc) +
-        " - " + highAndLow;
+    return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE))
+        + " - " + cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC)
+        + " - " + highAndLow;
   }
 
   /*

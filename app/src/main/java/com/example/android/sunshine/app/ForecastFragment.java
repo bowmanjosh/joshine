@@ -31,6 +31,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
   ForecastAdapter mForecastAdapter;
 
+  /**
+   * The database projection to use for this fragment's list of forecasts. This and the following
+   * int "indices" are a really bad hacky way to do this, but it's how the instructors are doing it
+   * and I don't know enough Java and Android to have a good solution. So just BEWARE that this is
+   * not a good solution and make sure not to mess it up.
+   */
   private static final String[] FORECAST_PROJECTION = {
       WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
       WeatherEntry.COL_DATE,
@@ -42,6 +48,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
       LocationEntry.COL_LATITUDE,
       LocationEntry.COL_LONGITUDE
   };
+  public static final int COL_WEATHER_TABLE_ID = 0;
+  public static final int COL_WEATHER_DATE = 1;
+  public static final int COL_WEATHER_SHORT_DESC = 2;
+  public static final int COL_WEATHER_MAX_TEMP = 3;
+  public static final int COL_WEATHER_MIN_TEMP = 4;
+  public static final int COL_LOC_SETTING = 5;
+  public static final int COL_WEATHER_ID = 6;
+  public static final int COL_LATITUDE = 7;
+  public static final int COL_LONGITUDE = 8;
 
   public ForecastFragment() {
   }
