@@ -16,12 +16,19 @@
 
 package com.example.android.sunshine.app;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +36,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.android.sunshine.app.data.WeatherContract;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -61,13 +70,72 @@ public class DetailActivity extends ActionBarActivity {
   /**
    * A placeholder fragment containing a simple view.
    */
-  public static class DetailFragment extends Fragment {
+  public static class DetailFragment extends Fragment
+      implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private ShareActionProvider mShareActionProvider;
-    private String mForecastStr;
+    private String mForecastStr = "fart";
+    private Uri mUri;
+    private TextView mTextView;
     private final String SHARE_HASHTAG = "#SunshineApp";
+    private static final int DETAIL_LOADER_ID = 0;
+
+    /**
+     * Copied from ForecastFragment. I still hate this but it's what the instructor code does. The
+     * int constants have been modified: in ForecastFragment they are public, here they're private.
+     */
+    private static final String[] DETAIL_PROJECTION = {
+        WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+        WeatherContract.WeatherEntry.COL_DATE,
+        WeatherContract.WeatherEntry.COL_SHORT_DESC,
+        WeatherContract.WeatherEntry.COL_MAX_TEMP,
+        WeatherContract.WeatherEntry.COL_MIN_TEMP,
+        WeatherContract.LocationEntry.COL_LOC_SETTING,
+        WeatherContract.WeatherEntry.COL_WEATHER_ID,
+        WeatherContract.LocationEntry.COL_LATITUDE,
+        WeatherContract.LocationEntry.COL_LONGITUDE
+    };
+    // private static final int COL_WEATHER_TABLE_ID = 0;
+    private static final int COL_WEATHER_DATE = 1;
+    private static final int COL_WEATHER_SHORT_DESC = 2;
+    private static final int COL_WEATHER_MAX_TEMP = 3;
+    private static final int COL_WEATHER_MIN_TEMP = 4;
+    // private static final int COL_LOC_SETTING = 5;
+    // private static final int COL_WEATHER_ID = 6;
+    // private static final int COL_LATITUDE = 7;
+    // private static final int COL_LONGITUDE = 8;
 
     public DetailFragment() {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+      return new CursorLoader(getActivity(),
+          mUri,
+          DETAIL_PROJECTION,
+          null,
+          null,
+          null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+      if (cursor.moveToFirst()) {
+        Log.d(LOG_TAG, "Cursor has " + cursor.getCount() + " rows.");
+        if (mTextView != null) {
+          mTextView.setText(Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
+              + " - " + cursor.getString(COL_WEATHER_SHORT_DESC)
+              + " - " + "PEPPERONI AND CHEESE");
+        }
+      }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+      mTextView.setText("fart has been reset");
     }
 
     @SuppressWarnings("deprecation")
@@ -83,8 +151,10 @@ public class DetailActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setHasOptionsMenu(true);
-      mForecastStr = getActivity().getIntent().getExtras()
-          .getString(Intent.EXTRA_TEXT);
+      Intent intent = getActivity().getIntent();
+      if (intent != null) {
+        mUri = intent.getData();
+      }
     }
 
     @Override
@@ -101,9 +171,15 @@ public class DetailActivity extends ActionBarActivity {
         Bundle savedInstanceState) {
       View rootView = inflater
           .inflate(R.layout.fragment_detail, container, false);
-      TextView tv = (TextView) rootView.findViewById(R.id.detail_text);
-      tv.setText(mForecastStr);
+      mTextView = (TextView) rootView.findViewById(R.id.detail_text);
+      mTextView.setText(mForecastStr);
       return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+      getLoaderManager().initLoader(DETAIL_LOADER_ID, null, this);
+      super.onActivityCreated(savedInstanceState);
     }
   }
 }

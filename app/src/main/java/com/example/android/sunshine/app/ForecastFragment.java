@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
@@ -112,6 +113,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
     listView.setAdapter(mForecastAdapter);
+    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+          Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+          if (cursor != null) {
+            String locationSetting = Utility.getPreferredLocation(getActivity());
+            Intent intent = new Intent(getActivity(), DetailActivity.class)
+                .setData(WeatherEntry.buildWeatherLocationWithDate(locationSetting,
+                    cursor.getLong(COL_WEATHER_DATE)));
+            startActivity(intent);
+          } else {
+            Log.d(LOG_TAG, "Call to adapterView.getItemAtPosition(i) failed.");
+          }
+        }
+    });
 
     return rootView;
   }
