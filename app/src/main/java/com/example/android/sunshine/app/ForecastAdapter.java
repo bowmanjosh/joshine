@@ -18,22 +18,17 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
-
-import java.util.Arrays;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
  */
 class ForecastAdapter extends CursorAdapter {
-  private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
+  // private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
 
   ForecastAdapter(Context context, Cursor c, int flags) {
     super(context, c, flags);
