@@ -16,7 +16,6 @@
 
 package com.example.android.sunshine.app;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -76,9 +75,8 @@ public class DetailActivity extends ActionBarActivity {
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private ShareActionProvider mShareActionProvider;
-    private String mForecastStr = "fart";
+    private String mForecastStr;
     private Uri mUri;
-    private TextView mTextView;
     private final String SHARE_HASHTAG = "#SunshineApp";
     private static final int DETAIL_LOADER_ID = 0;
 
@@ -122,20 +120,32 @@ public class DetailActivity extends ActionBarActivity {
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-      if (cursor.moveToFirst()) {
-        Log.d(LOG_TAG, "Cursor has " + cursor.getCount() + " rows.");
-        if (mTextView != null) {
-          mTextView.setText(Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
+      if (!cursor.moveToFirst()) {
+        return;
+      }
+
+      Log.v(LOG_TAG, "Cursor has " + cursor.getCount() + " rows.");
+
+      View rootView = getView();
+      if (rootView != null) {
+        TextView tv = (TextView) getView().findViewById(R.id.detail_text);
+        if (tv != null) {
+          boolean celsius = Utility.isCelsius(getContext());
+          Log.v(LOG_TAG, "Celsius status: " + celsius);
+          // the following is pretty much copied from ForecastAdapter
+          mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
               + " - " + cursor.getString(COL_WEATHER_SHORT_DESC)
-              + " - " + "PEPPERONI AND CHEESE");
+              + " - " + Utility.formatTemperature(
+              cursor.getDouble(COL_WEATHER_MAX_TEMP), celsius)
+              + "/" + Utility.formatTemperature(
+              cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
+          tv.setText(mForecastStr);
         }
       }
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-      mTextView.setText("fart has been reset");
     }
 
     @SuppressWarnings("deprecation")
@@ -144,7 +154,7 @@ public class DetailActivity extends ActionBarActivity {
           .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
           .setAction(Intent.ACTION_SEND)
           .setType("text/plain")
-          .putExtra(Intent.EXTRA_TEXT, mForecastStr + SHARE_HASHTAG);
+          .putExtra(Intent.EXTRA_TEXT, mForecastStr + " " + SHARE_HASHTAG);
     }
 
     @Override
@@ -169,11 +179,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
-      View rootView = inflater
-          .inflate(R.layout.fragment_detail, container, false);
-      mTextView = (TextView) rootView.findViewById(R.id.detail_text);
-      mTextView.setText(mForecastStr);
-      return rootView;
+      return inflater.inflate(R.layout.fragment_detail, container, false);
     }
 
     @Override

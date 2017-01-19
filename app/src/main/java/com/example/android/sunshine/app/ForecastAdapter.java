@@ -34,15 +34,6 @@ class ForecastAdapter extends CursorAdapter {
     super(context, c, flags);
   }
 
-  /**
-   * Prepare the weather high/lows for presentation.
-   */
-  private String formatHighLows(double high, double low) {
-    boolean isMetric = Utility.isCelsius(mContext);
-    return Utility.formatTemperature(high, isMetric) + "/"
-        + Utility.formatTemperature(low, isMetric);
-  }
-
   /*
       This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
       string.
@@ -50,13 +41,14 @@ class ForecastAdapter extends CursorAdapter {
   private String convertCursorRowToUXFormat(Cursor cursor) {
     // WARNING: We are using the hacky "index" values from ForecastFragment in this method.
 
-    String highAndLow = formatHighLows(
-        cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
-        cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
+    boolean celsius = Utility.isCelsius(mContext);
 
     return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE))
-        + " - " + cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC)
-        + " - " + highAndLow;
+        + " - " + cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC) + " - "
+        + Utility.formatTemperature(
+            cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), celsius)
+        + "/" + Utility.formatTemperature(
+            cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), celsius);
   }
 
   /*
@@ -75,7 +67,7 @@ class ForecastAdapter extends CursorAdapter {
     // our view is pretty simple here --- just a text view
     // we'll keep the UI functional with a simple (and slow!) binding.
 
-    TextView tv = (TextView)view;
+    TextView tv = (TextView) view;
     tv.setText(convertCursorRowToUXFormat(cursor));
   }
 }
