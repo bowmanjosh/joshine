@@ -141,6 +141,10 @@ public class DetailActivity extends ActionBarActivity {
               cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
           tv.setText(mForecastStr);
         }
+
+        if (mShareActionProvider != null) {
+          mShareActionProvider.setShareIntent(createShareForecastIntent());
+        }
       }
     }
 
@@ -172,7 +176,9 @@ public class DetailActivity extends ActionBarActivity {
       inflater.inflate(R.menu.detail_fragment, menu);
       mShareActionProvider = (ShareActionProvider) MenuItemCompat
           .getActionProvider(menu.findItem(R.id.action_menu_share));
-      mShareActionProvider.setShareIntent(createShareForecastIntent());
+      if (mForecastStr != null) {
+        mShareActionProvider.setShareIntent(createShareForecastIntent());
+      }
       super.onCreateOptionsMenu(menu, inflater);
     }
 
