@@ -62,6 +62,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
   public ForecastFragment() {
   }
 
+  void onLocationChanged() {
+    updateWeather();
+    getLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
+  }
+
   private void updateWeather() {
     Log.v(LOG_TAG, "Now inside updateWeather()");
     FetchWeatherTask fetchWeather = new FetchWeatherTask(getActivity());
@@ -136,12 +141,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
   public void onActivityCreated(Bundle savedInstanceState) {
     getLoaderManager().initLoader(FORECAST_LOADER_ID, null, this);
     super.onActivityCreated(savedInstanceState);
-  }
-
-  @Override
-  public void onStart() {
-    super.onStart();
-    updateWeather();
   }
 
   @Override
