@@ -37,23 +37,6 @@ class ForecastAdapter extends CursorAdapter {
   }
 
   /*
-      This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
-      string.
-   */
-  private String convertCursorRowToUXFormat(Cursor cursor) {
-    // WARNING: We are using the hacky "index" values from ForecastFragment in this method.
-
-    boolean celsius = Utility.isCelsius(mContext);
-
-    return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE))
-        + " - " + cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC) + " - "
-        + Utility.formatTemperature(
-            cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), celsius)
-        + "/" + Utility.formatTemperature(
-            cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), celsius);
-  }
-
-  /*
       Remember that these views are reused as needed.
    */
   @Override
@@ -72,15 +55,19 @@ class ForecastAdapter extends CursorAdapter {
 
     // This just displays the date in milliseconds. Later, we will format the date more nicely.
     TextView date = (TextView) view.findViewById(R.id.list_item_date_textview);
-    date.setText(String.valueOf(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+    date.setText(Utility.getFriendlyDayString(context,
+        cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 
     TextView forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
     forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC));
 
     // Display temperatures as valueOf(Double) for now. Later: format them more nicely.
+    boolean isCelsius = Utility.isCelsius(context);
     TextView high = (TextView) view.findViewById(R.id.list_item_high_textview);
-    high.setText(String.valueOf(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP)));
+    high.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
+        isCelsius));
     TextView low = (TextView) view.findViewById(R.id.list_item_low_textview);
-    low.setText(String.valueOf(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP)));
+    low.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP),
+        isCelsius));
   }
 }
