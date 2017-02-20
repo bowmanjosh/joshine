@@ -5,7 +5,8 @@
     <item>@string/str_celsius_label</item>
     <item>@string/str_fahrenheit_label</item>
   </string-array>
-  <string-array name="pref_units_values" translatable="false">
+  <string-array name="pref_units_values"
+      translatable="false">
     <item>@string/str_celsius_key</item>
     <item>@string/str_fahrenheit_key</item>
   </string-array>
