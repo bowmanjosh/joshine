@@ -17,10 +17,12 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.media.Image;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -64,10 +66,21 @@ class ForecastAdapter extends CursorAdapter {
    */
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
-    // our view is pretty simple here --- just a text view
-    // we'll keep the UI functional with a simple (and slow!) binding.
+    // Use placeholder image. Later we will use weather ID to set an icon.
+    ImageView icon = (ImageView) view.findViewById(R.id.list_item_icon);
+    icon.setImageResource(R.drawable.ic_launcher);
 
-    //TextView tv = (TextView) view;
-    //tv.setText(convertCursorRowToUXFormat(cursor));
+    // This just displays the date in milliseconds. Later, we will format the date more nicely.
+    TextView date = (TextView) view.findViewById(R.id.list_item_date_textview);
+    date.setText(String.valueOf(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+
+    TextView forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+    forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC));
+
+    // Display temperatures as valueOf(Double) for now. Later: format them more nicely.
+    TextView high = (TextView) view.findViewById(R.id.list_item_high_textview);
+    high.setText(String.valueOf(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP)));
+    TextView low = (TextView) view.findViewById(R.id.list_item_low_textview);
+    low.setText(String.valueOf(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP)));
   }
 }
