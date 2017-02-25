@@ -32,8 +32,26 @@ import android.widget.TextView;
 class ForecastAdapter extends CursorAdapter {
   // private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
 
+  private final int VIEW_TYPE_COUNT = 2;
+  private final int VIEW_TYPE_TODAY = 0;
+  private final int VIEW_TYPE_FUTURE_DAY = 1;
+
   ForecastAdapter(Context context, Cursor c, int flags) {
     super(context, c, flags);
+  }
+
+  @Override
+  public int getItemViewType(int position) {
+    if (position == 0) {
+      return VIEW_TYPE_TODAY;
+    } else {
+      return VIEW_TYPE_FUTURE_DAY;
+    }
+  }
+
+  @Override
+  public int getViewTypeCount() {
+    return VIEW_TYPE_COUNT;
   }
 
   /*
@@ -41,7 +59,13 @@ class ForecastAdapter extends CursorAdapter {
    */
   @Override
   public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    return LayoutInflater.from(context).inflate(R.layout.list_item_forecast, parent, false);
+    final int layoutId;
+    if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY) {
+      layoutId = R.layout.list_item_forecast_today;
+    } else {
+      layoutId = R.layout.list_item_forecast;
+    }
+    return LayoutInflater.from(context).inflate(layoutId, parent, false);
   }
 
   /*
