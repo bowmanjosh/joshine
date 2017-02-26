@@ -18,12 +18,15 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.media.Image;
+import android.provider.ContactsContract;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
@@ -35,6 +38,22 @@ class ForecastAdapter extends CursorAdapter {
   private final int VIEW_TYPE_COUNT = 2;
   private final int VIEW_TYPE_TODAY = 0;
   private final int VIEW_TYPE_FUTURE_DAY = 1;
+
+  private static class ListItemViewHolder {
+    final ImageView icon;
+    final TextView date;
+    final TextView forecast;
+    final TextView high;
+    final TextView low;
+
+    ListItemViewHolder(View view) {
+      icon = (ImageView) view.findViewById(R.id.list_item_icon);
+      date = (TextView) view.findViewById(R.id.list_item_date_textview);
+      forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+      high = (TextView) view.findViewById(R.id.list_item_high_textview);
+      low = (TextView) view.findViewById(R.id.list_item_low_textview);
+    }
+  }
 
   ForecastAdapter(Context context, Cursor c, int flags) {
     super(context, c, flags);
@@ -65,7 +84,12 @@ class ForecastAdapter extends CursorAdapter {
     } else {
       layoutId = R.layout.list_item_forecast;
     }
-    return LayoutInflater.from(context).inflate(layoutId, parent, false);
+
+    View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+    ListItemViewHolder viewHolder = new ListItemViewHolder(view);
+    view.setTag(viewHolder);
+
+    return view;
   }
 
   /*
@@ -73,25 +97,20 @@ class ForecastAdapter extends CursorAdapter {
    */
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
+    ListItemViewHolder viewHolder = (ListItemViewHolder) view.getTag();
+
     // Use placeholder image. Later we will use weather ID to set an icon.
-    ImageView icon = (ImageView) view.findViewById(R.id.list_item_icon);
-    icon.setImageResource(R.drawable.ic_launcher);
+    viewHolder.icon.setImageResource(R.drawable.ic_launcher);
 
-    // This just displays the date in milliseconds. Later, we will format the date more nicely.
-    TextView date = (TextView) view.findViewById(R.id.list_item_date_textview);
-    date.setText(Utility.getFriendlyDayString(context,
+    viewHolder.date.setText(Utility.getFriendlyDayString(context,
         cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
-
-    TextView forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
-    forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC));
+    viewHolder.forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC));
 
     // Display temperatures as valueOf(Double) for now. Later: format them more nicely.
     boolean isCelsius = Utility.isCelsius(context);
-    TextView high = (TextView) view.findViewById(R.id.list_item_high_textview);
-    high.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
-        isCelsius));
-    TextView low = (TextView) view.findViewById(R.id.list_item_low_textview);
-    low.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP),
-        isCelsius));
+    viewHolder.high.setText(Utility.formatTemperature(
+        cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isCelsius));
+    viewHolder.low.setText(Utility.formatTemperature(
+        cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isCelsius));
   }
 }
