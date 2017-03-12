@@ -17,16 +17,12 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.media.Image;
-import android.provider.ContactsContract;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
@@ -108,9 +104,9 @@ class ForecastAdapter extends CursorAdapter {
 
     // Display temperatures as valueOf(Double) for now. Later: format them more nicely.
     boolean isCelsius = Utility.isCelsius(context);
-    viewHolder.high.setText(Utility.formatTemperature(
+    viewHolder.high.setText(Utility.formatTemperature(context,
         cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isCelsius));
-    viewHolder.low.setText(Utility.formatTemperature(
+    viewHolder.low.setText(Utility.formatTemperature(context,
         cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isCelsius));
   }
 }

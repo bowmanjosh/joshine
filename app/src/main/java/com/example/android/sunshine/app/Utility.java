@@ -44,12 +44,12 @@ class Utility {
         .equals(context.getString(R.string.str_celsius_key));
   }
 
-  static String formatTemperature(double temperature, boolean isCelsius) {
+  static String formatTemperature(Context context, double temperature, boolean isCelsius) {
     if ( !isCelsius ) {
       temperature = temperature * 9 / 5 + 32;
     }
 
-    return String.format(Locale.getDefault(), "%.0f", temperature);
+    return context.getString(R.string.format_temperature, temperature);
   }
 
   static String formatDate(long dateInMillis) {

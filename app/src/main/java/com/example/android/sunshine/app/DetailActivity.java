@@ -16,6 +16,7 @@
 
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -132,12 +133,12 @@ public class DetailActivity extends ActionBarActivity {
         if (tv != null) {
           boolean celsius = Utility.isCelsius(getContext());
           Log.v(LOG_TAG, "Celsius status: " + celsius);
-          // the following is pretty much copied from ForecastAdapter
+          Context context = getActivity();
           mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
               + " - " + cursor.getString(COL_WEATHER_SHORT_DESC)
-              + " - " + Utility.formatTemperature(
+              + " - " + Utility.formatTemperature(context,
               cursor.getDouble(COL_WEATHER_MAX_TEMP), celsius)
-              + "/" + Utility.formatTemperature(
+              + "/" + Utility.formatTemperature(context,
               cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
           tv.setText(mForecastStr);
         }
