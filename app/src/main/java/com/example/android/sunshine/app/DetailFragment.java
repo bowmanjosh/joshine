@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
@@ -83,19 +84,42 @@ public class DetailFragment extends Fragment
 
     View rootView = getView();
     if (rootView != null) {
+      Context context = getContext();
+
+      // This is the old code we used to wrangle up a text string
+      /*
       TextView tv = (TextView) getView().findViewById(R.id.detail_text);
-      if (tv != null) {
-        boolean celsius = Utility.isCelsius(getContext());
-        Log.v(LOG_TAG, "Celsius status: " + celsius);
-        Context context = getActivity();
-        mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
-            + " - " + cursor.getString(COL_WEATHER_SHORT_DESC)
-            + " - " + Utility.formatTemperature(context,
-            cursor.getDouble(COL_WEATHER_MAX_TEMP), celsius)
-            + "/" + Utility.formatTemperature(context,
-            cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
-        tv.setText(mForecastStr);
-      }
+      boolean celsius = Utility.isCelsius(getContext());
+      Log.v(LOG_TAG, "Celsius status: " + celsius);
+      mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
+          + " - " + cursor.getString(COL_WEATHER_SHORT_DESC)
+          + " - " + Utility.formatTemperature(context,
+          cursor.getDouble(COL_WEATHER_MAX_TEMP), celsius)
+          + "/" + Utility.formatTemperature(context,
+          cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
+      tv.setText(mForecastStr);
+      */
+
+      // The view-filler code here was adapted (heh) from an old version of ForecastAdapter.
+      View todayView = rootView.findViewById(R.id.list_item_forecast_today);
+      ImageView icon = (ImageView) todayView.findViewById(R.id.list_item_icon);
+      icon.setImageResource(R.drawable.ic_launcher);
+
+      TextView date = (TextView) todayView.findViewById(R.id.list_item_date_textview);
+      date.setText(Utility.getFriendlyDayString(context,
+          cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+
+      TextView forecast = (TextView) todayView.findViewById(R.id.list_item_forecast_textview);
+      forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_SHORT_DESC));
+
+      boolean isCelsius = Utility.isCelsius(context);
+      TextView high = (TextView) todayView.findViewById(R.id.list_item_high_textview);
+      high.setText(Utility.formatTemperature(context,
+          cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isCelsius));
+      TextView low = (TextView) todayView.findViewById(R.id.list_item_low_textview);
+      low.setText(Utility.formatTemperature(context,
+          cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isCelsius));
+
 
       if (mShareActionProvider != null) {
         mShareActionProvider.setShareIntent(createShareForecastIntent());
