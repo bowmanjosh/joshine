@@ -42,3 +42,7 @@ build/
 
 # Secrets
 /app/src/main/res/values/privatey.xml
+
+# Snips of mockups from Udacity
+sunshine-detailfragment.jpg
+sunshine-forecastfragment.jpg

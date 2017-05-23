@@ -31,6 +31,38 @@ class Utility {
   // back into date objects for comparison/processing.
   private static final String DATE_FORMAT = "yyyyMMdd";
 
+  static String convertWindDirection(double degrees) {
+    if (degrees >= 337.5 || degrees < 22.5) {
+      return "N";
+    } else if (degrees >= 22.5 && degrees < 67.5) {
+      return "NE";
+    } else if (degrees >= 67.5 && degrees < 112.5) {
+      return "E";
+    } else if (degrees >= 112.5 && degrees < 157.5) {
+      return "SE";
+    } else if (degrees >= 157.5 && degrees < 202.5) {
+      return "S";
+    } else if (degrees >= 202.5 && degrees < 247.5) {
+      return "SW";
+    } else if (degrees >= 247.5 && degrees < 292.5) {
+      return "W";
+    } else if (degrees >= 292.5 && degrees < 337.5) {
+      return "NW";
+    } else {
+      return "";
+    }
+  }
+
+  // OWM gives wind speed in meters per second. Convert to kilometers per hour or miles per hour.
+  // Units reference: https://www.weather.gov/media/epz/wxcalc/windConversion.pdf
+  static double convertWindSpeed(double speed, boolean isCelsius) {
+    if (isCelsius) {
+      return speed * 3.6;
+    } else {
+      return speed * 2.23694;
+    }
+  }
+
   static String getPreferredLocation(Context context) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     return prefs.getString(context.getString(R.string.pref_location_key),
