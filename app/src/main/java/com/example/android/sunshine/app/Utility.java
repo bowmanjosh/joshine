@@ -96,7 +96,7 @@ class Utility {
    * @param context Context to use for resource localization
    * @param dateInMillis The date in milliseconds
    */
-  private static String getDayName(Context context, long dateInMillis) {
+  static String getDayName(Context context, long dateInMillis) {
     // If the date is today, return the localized version of "Today" instead of the actual
     // day name.
 
@@ -124,10 +124,9 @@ class Utility {
    *                in Utility.DATE_FORMAT
    * @return The day in the form of a string formatted "December 6"
    */
-  private static String getFormattedMonthDay(Context context, long dateInMillis ) {
+  static String getFormattedMonthDay(Context context, long dateInMillis) {
     Time time = new Time();
     time.setToNow();
-    SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
     SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
     return monthDayFormat.format(dateInMillis);
   }

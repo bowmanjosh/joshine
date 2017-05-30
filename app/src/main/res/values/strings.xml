@@ -35,14 +35,16 @@
   <!-- Temperature format string [CHAR LIMIT=5] -->
   <string name="format_temperature"><xliff:g id="temperature">%1.0f</xliff:g>\u00B0</string>
 
-  <!-- Humidity string in DetailFragment. -->
+  <!-- Accessibility string for our weather icon. -->
+  <string name="weather_icon_contentDescription">Weather</string>
+
+  <!-- Strings for DetailFragment. -->
   <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
-  <!-- Wind string in DetailFragment. -->
   <string name="wind_units_metric">km/h</string>
   <string name="wind_units_imperial">MPH</string>
-  <string name="format_wind">Wind: <xliff:g id="wind_speed">%1$1.0f</xliff:g> <xliff:g id="wind_units">%2$s</xliff:g> <xliff:g id="wind_direction">%3$s</xliff:g>
+  <string
+      name="format_wind">Wind: <xliff:g id="wind_speed">%1$1.0f</xliff:g> <xliff:g id="wind_units">%2$s</xliff:g> <xliff:g id="wind_direction">%3$s</xliff:g>
   </string>
-  <!-- Pressure string in DetailFragment. -->
   <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
 
 </resources>

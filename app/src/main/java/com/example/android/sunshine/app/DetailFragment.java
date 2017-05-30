@@ -31,9 +31,9 @@ public class DetailFragment extends Fragment
   private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
   private ShareActionProvider mShareActionProvider;
-  private String mForecastStr = "TEST FART";
+  private String mForecastShare = null;
   private Uri mUri;
-  private final String SHARE_HASHTAG = "#SunshineApp";
+  private static final String SHARE_HASHTAG = "#SunshineApp";
   private static final int DETAIL_LOADER_ID = 0;
 
   /**
@@ -61,6 +61,17 @@ public class DetailFragment extends Fragment
   private static final int COL_WEATHER_DEGREES = 7;
   private static final int COL_WEATHER_PRESSURE = 8;
 
+  // Member variables to hold references to Views.
+  private ImageView mWeatherIcon;
+  private TextView mDayName;
+  private TextView mMonthDate;
+  private TextView mWeather;
+  private TextView mHigh;
+  private TextView mLow;
+  private TextView mHumidity;
+  private TextView mWind;
+  private TextView mPressure;
+
   public DetailFragment() {
   }
 
@@ -86,45 +97,22 @@ public class DetailFragment extends Fragment
     if (rootView != null) {
       Context context = getContext();
 
-      // This is the old code we used to wrangle up a text string
-      /*
-      TextView tv = (TextView) getView().findViewById(R.id.detail_text);
-      boolean celsius = Utility.isCelsius(getContext());
-      Log.v(LOG_TAG, "Celsius status: " + celsius);
-      mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE))
-          + " - " + cursor.getfString(COL_WEATHER_SHORT_DESC)
-          + " - " + Utility.formatTemperature(context,
-          cursor.getDouble(COL_WEATHER_MAX_TEMP), celsius)
-          + "/" + Utility.formatTemperature(context,
-          cursor.getDouble(COL_WEATHER_MIN_TEMP), celsius);
-      tv.setText(mForecastStr);
-      */
-
-      // The view-filler code here was adapted (heh) from an old version of ForecastAdapter.
-      //View todayView = rootView.findViewById(R.id.list_item_forecast_today);
-      ImageView icon = (ImageView) rootView.findViewById(R.id.list_item_icon);
-      icon.setImageResource(R.drawable.ic_launcher);
-
-      TextView date = (TextView) rootView.findViewById(R.id.list_item_date_textview);
-      date.setText(Utility.getFriendlyDayString(context,
-          cursor.getLong(COL_WEATHER_DATE)));
-
-      TextView forecast = (TextView) rootView.findViewById(R.id.list_item_forecast_textview);
-      forecast.setText(cursor.getString(COL_WEATHER_SHORT_DESC));
-
+      mWeatherIcon.setImageResource(R.drawable.ic_launcher);
+      long dateLong = cursor.getLong(COL_WEATHER_DATE);
+      mDayName.setText(Utility.getDayName(context, dateLong));
+      String dateString = Utility.getFormattedMonthDay(context, dateLong);
+      mMonthDate.setText(dateString);
+      String weather = cursor.getString(COL_WEATHER_SHORT_DESC);
+      mWeather.setText(weather);
       boolean isCelsius = Utility.isCelsius(context);
-      TextView high = (TextView) rootView.findViewById(R.id.list_item_high_textview);
-      high.setText(Utility.formatTemperature(context,
-          cursor.getDouble(COL_WEATHER_MAX_TEMP), isCelsius));
-      TextView low = (TextView) rootView.findViewById(R.id.list_item_low_textview);
-      low.setText(Utility.formatTemperature(context,
-          cursor.getDouble(COL_WEATHER_MIN_TEMP), isCelsius));
-
-      // These are the extra TextView elements only shown in the "Detail" fragment/activity.
-      TextView humidity = (TextView) rootView.findViewById(R.id.fragment_detail_humidity_textview);
-      humidity.setText(context
+      String high = Utility.formatTemperature(context, cursor.getDouble(COL_WEATHER_MAX_TEMP),
+          isCelsius);
+      mHigh.setText(high);
+      String low = Utility.formatTemperature(context, cursor.getDouble(COL_WEATHER_MIN_TEMP),
+          isCelsius);
+      mLow.setText(low);
+      mHumidity.setText(context
           .getString(R.string.format_humidity, cursor.getFloat(COL_WEATHER_HUMIDITY)));
-
       double windSpeed = Utility
           .convertWindSpeed(cursor.getDouble(COL_WEATHER_WIND_SPEED), isCelsius);
       String windUnits;
@@ -134,15 +122,13 @@ public class DetailFragment extends Fragment
         windUnits = getString(R.string.wind_units_imperial);
       }
       String windDirection = Utility.convertWindDirection(cursor.getDouble(COL_WEATHER_DEGREES));
-      TextView wind = (TextView) rootView.findViewById(R.id.fragment_detail_wind_textview);
-      wind.setText(context.getString(R.string.format_wind, windSpeed, windUnits, windDirection));
-
-      TextView pressure = (TextView) rootView.findViewById(R.id.fragment_detail_pressure_textview);
-      pressure.setText(context
+      mWind.setText(context.getString(R.string.format_wind, windSpeed, windUnits, windDirection));
+      mPressure.setText(context
           .getString(R.string.format_pressure, cursor.getDouble(COL_WEATHER_PRESSURE)));
 
 
-      // social web 2.0 cloud engagement hashtag
+      // social web 2.0 cloud engagement
+      mForecastShare = String.format("%s - %s - %s/%s", dateString, weather, high, low);
       if (mShareActionProvider != null) {
         mShareActionProvider.setShareIntent(createShareForecastIntent());
       }
@@ -159,7 +145,7 @@ public class DetailFragment extends Fragment
         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
         .setAction(Intent.ACTION_SEND)
         .setType("text/plain")
-        .putExtra(Intent.EXTRA_TEXT, mForecastStr + " " + SHARE_HASHTAG);
+        .putExtra(Intent.EXTRA_TEXT, mForecastShare + " " + SHARE_HASHTAG);
   }
 
   @Override
@@ -177,7 +163,7 @@ public class DetailFragment extends Fragment
     inflater.inflate(R.menu.detail_fragment, menu);
     mShareActionProvider = (ShareActionProvider) MenuItemCompat
         .getActionProvider(menu.findItem(R.id.action_menu_share));
-    if (mForecastStr != null) {
+    if (mForecastShare != null) {
       mShareActionProvider.setShareIntent(createShareForecastIntent());
     }
     super.onCreateOptionsMenu(menu, inflater);
@@ -186,7 +172,18 @@ public class DetailFragment extends Fragment
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_detail, container, false);
+    View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+    mWeatherIcon = (ImageView) rootView.findViewById(R.id.fragment_detail_weather_icon);
+    mDayName = (TextView) rootView.findViewById(R.id.fragment_detail_day_name_textview);
+    mMonthDate = (TextView) rootView.findViewById(R.id.fragment_detail_month_date_textview);
+    mWeather = (TextView) rootView.findViewById(R.id.fragment_detail_weather_textview);
+    mHigh = (TextView) rootView.findViewById(R.id.fragment_detail_high_textview);
+    mLow = (TextView) rootView.findViewById(R.id.fragment_detail_low_textview);
+    mHumidity = (TextView) rootView.findViewById(R.id.fragment_detail_humidity_textview);
+    mWind = (TextView) rootView.findViewById(R.id.fragment_detail_wind_textview);
+    mPressure = (TextView) rootView.findViewById(R.id.fragment_detail_pressure_textview);
+
+    return rootView;
   }
 
   @Override

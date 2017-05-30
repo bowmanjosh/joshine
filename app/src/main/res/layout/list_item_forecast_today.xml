@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
   <LinearLayout
       android:layout_width="wrap_content"
@@ -40,7 +41,8 @@
         android:id="@+id/list_item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"/>
+        android:src="@drawable/ic_launcher"
+        android:contentDescription="@string/weather_icon_contentDescription"/>
 
     <TextView
         android:id="@+id/list_item_forecast_textview"
