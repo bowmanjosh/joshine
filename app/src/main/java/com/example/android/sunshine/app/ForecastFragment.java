@@ -27,10 +27,10 @@ import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
  * @see MainActivity
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-  static final String LOG_TAG = ForecastFragment.class.getSimpleName();
+  private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
   private static final int FORECAST_LOADER_ID = 1;
 
-  ForecastAdapter mForecastAdapter;
+  private ForecastAdapter mForecastAdapter;
 
   /**
    * The database projection to use for this fragment's list of forecasts. This and the following
@@ -116,7 +116,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-    ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+    ListView listView = rootView.findViewById(R.id.listview_forecast);
     listView.setAdapter(mForecastAdapter);
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override

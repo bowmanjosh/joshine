@@ -25,15 +25,15 @@ import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 /**
  * Manages a local database for weather data.
  */
-public class WeatherDbHelper extends SQLiteOpenHelper {
+class WeatherDbHelper extends SQLiteOpenHelper {
 
   // DATABASE_VERSION must be incremented when the database schema changes.
   private static final int DATABASE_VERSION = 2;
 
   static final String DATABASE_NAME = "weather.db";
-  static final String LOG_TAG = WeatherDbHelper.class.getSimpleName();
+  // static final String LOG_TAG = WeatherDbHelper.class.getSimpleName();
 
-  public WeatherDbHelper(Context context) {
+  WeatherDbHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 

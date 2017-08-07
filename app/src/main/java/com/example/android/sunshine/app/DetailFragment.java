@@ -100,7 +100,7 @@ public class DetailFragment extends Fragment
       mWeatherIcon.setImageResource(R.drawable.ic_launcher);
       long dateLong = cursor.getLong(COL_WEATHER_DATE);
       mDayName.setText(Utility.getDayName(context, dateLong));
-      String dateString = Utility.getFormattedMonthDay(context, dateLong);
+      String dateString = Utility.getFormattedMonthDay(dateLong);
       mMonthDate.setText(dateString);
       String weather = cursor.getString(COL_WEATHER_SHORT_DESC);
       mWeather.setText(weather);
@@ -173,15 +173,15 @@ public class DetailFragment extends Fragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-    mWeatherIcon = (ImageView) rootView.findViewById(R.id.fragment_detail_weather_icon);
-    mDayName = (TextView) rootView.findViewById(R.id.fragment_detail_day_name_textview);
-    mMonthDate = (TextView) rootView.findViewById(R.id.fragment_detail_month_date_textview);
-    mWeather = (TextView) rootView.findViewById(R.id.fragment_detail_weather_textview);
-    mHigh = (TextView) rootView.findViewById(R.id.fragment_detail_high_textview);
-    mLow = (TextView) rootView.findViewById(R.id.fragment_detail_low_textview);
-    mHumidity = (TextView) rootView.findViewById(R.id.fragment_detail_humidity_textview);
-    mWind = (TextView) rootView.findViewById(R.id.fragment_detail_wind_textview);
-    mPressure = (TextView) rootView.findViewById(R.id.fragment_detail_pressure_textview);
+    mWeatherIcon = rootView.findViewById(R.id.fragment_detail_weather_icon);
+    mDayName = rootView.findViewById(R.id.fragment_detail_day_name_textview);
+    mMonthDate = rootView.findViewById(R.id.fragment_detail_month_date_textview);
+    mWeather = rootView.findViewById(R.id.fragment_detail_weather_textview);
+    mHigh = rootView.findViewById(R.id.fragment_detail_high_textview);
+    mLow = rootView.findViewById(R.id.fragment_detail_low_textview);
+    mHumidity = rootView.findViewById(R.id.fragment_detail_humidity_textview);
+    mWind = rootView.findViewById(R.id.fragment_detail_wind_textview);
+    mPressure = rootView.findViewById(R.id.fragment_detail_pressure_textview);
 
     return rootView;
   }

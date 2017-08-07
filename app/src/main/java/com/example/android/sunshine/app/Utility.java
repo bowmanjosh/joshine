@@ -20,16 +20,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 class Utility {
-  // Format used for storing dates in the database.  Also used for converting those strings
-  // back into date objects for comparison/processing.
-  private static final String DATE_FORMAT = "yyyyMMdd";
 
   static String convertWindDirection(double degrees) {
     if (degrees >= 337.5 || degrees < 22.5) {
@@ -84,10 +78,6 @@ class Utility {
     return context.getString(R.string.format_temperature, temperature);
   }
 
-  static String formatDate(long dateInMillis) {
-    Date date = new Date(dateInMillis);
-    return DateFormat.getDateInstance().format(date);
-  }
 
   /**
    * Given a day, returns just the name to use for that day.
@@ -96,6 +86,7 @@ class Utility {
    * @param context Context to use for resource localization
    * @param dateInMillis The date in milliseconds
    */
+  @SuppressWarnings("deprecation")
   static String getDayName(Context context, long dateInMillis) {
     // If the date is today, return the localized version of "Today" instead of the actual
     // day name.
@@ -112,22 +103,20 @@ class Utility {
       Time time = new Time();
       time.setToNow();
       // Otherwise, the format is just the day of the week (e.g "Wednesday".
-      SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+      // Note: should probably be using Android's locale methods but I don't understand them yet.
+      SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
       return dayFormat.format(dateInMillis);
     }
   }
 
   /**
    * Converts db date format to the format "Month day", e.g "June 24".
-   * @param context Context to use for resource localization
    * @param dateInMillis The db formatted date string, expected to be of the form specified
    *                in Utility.DATE_FORMAT
    * @return The day in the form of a string formatted "December 6"
    */
-  static String getFormattedMonthDay(Context context, long dateInMillis) {
-    Time time = new Time();
-    time.setToNow();
-    SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
+  static String getFormattedMonthDay(long dateInMillis) {
+    SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd", Locale.getDefault());
     return monthDayFormat.format(dateInMillis);
   }
 
@@ -139,6 +128,7 @@ class Utility {
    * @param dateInMillis The date in milliseconds
    * @return a user-friendly representation of the date.
    */
+  @SuppressWarnings("deprecation")
   static String getFriendlyDayString(Context context, long dateInMillis) {
     // The day string for forecast uses the following logic:
     // For today: "Today, June 8"
@@ -160,13 +150,14 @@ class Utility {
       return context.getString(
           formatId,
           today,
-          getFormattedMonthDay(context, dateInMillis));
+          getFormattedMonthDay(dateInMillis));
     } else if ( julianDay < currentJulianDay + 7 ) {
       // If the input date is less than a week in the future, just return the day name.
       return getDayName(context, dateInMillis);
     } else {
       // Otherwise, use the form "Mon Jun 3"
-      SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+      SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd",
+          Locale.getDefault());
       return shortenedDateFormat.format(dateInMillis);
     }
   }

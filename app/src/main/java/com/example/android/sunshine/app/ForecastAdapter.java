@@ -43,11 +43,11 @@ class ForecastAdapter extends CursorAdapter {
     final TextView low;
 
     ListItemViewHolder(View view) {
-      icon = (ImageView) view.findViewById(R.id.list_item_icon);
-      date = (TextView) view.findViewById(R.id.list_item_date_textview);
-      forecast = (TextView) view.findViewById(R.id.list_item_forecast_textview);
-      high = (TextView) view.findViewById(R.id.list_item_high_textview);
-      low = (TextView) view.findViewById(R.id.list_item_low_textview);
+      icon = view.findViewById(R.id.list_item_icon);
+      date = view.findViewById(R.id.list_item_date_textview);
+      forecast = view.findViewById(R.id.list_item_forecast_textview);
+      high = view.findViewById(R.id.list_item_high_textview);
+      low = view.findViewById(R.id.list_item_low_textview);
     }
   }
 

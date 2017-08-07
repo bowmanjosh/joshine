@@ -15,9 +15,9 @@
  */
 package com.example.android.sunshine.app.data;
 
-import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +27,7 @@ import android.support.annotation.NonNull;
 
 public class WeatherProvider extends ContentProvider {
 
-  static final String LOG_TAG = WeatherProvider.class.getSimpleName();
+  // static final String LOG_TAG = WeatherProvider.class.getSimpleName();
 
   // The URI Matcher used by this content provider.
   private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -216,7 +216,10 @@ public class WeatherProvider extends ContentProvider {
         throw new UnsupportedOperationException("Unknown uri: " + uri);
       }
     }
-    retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+    Context context = getContext();
+    if (context != null) {
+      retCursor.setNotificationUri(context.getContentResolver(), uri);
+    }
     return retCursor;
   }
 
@@ -259,12 +262,15 @@ public class WeatherProvider extends ContentProvider {
       }
     }
 
-    /**
-     * Reminder: notifyChange() needs to be passed the Uri that was passed
-     * *into* this function, not the one we have constructed to return. If we
-     * use the one we plan to return, listeners will not be notified.
+    /*
+      Reminder: notifyChange() needs to be passed the Uri that was passed
+      *into* this function, not the one we have constructed to return. If we
+      use the one we plan to return, listeners will not be notified.
      */
-    getContext().getContentResolver().notifyChange(uri, null);
+    Context context = getContext();
+    if (context != null) {
+      context.getContentResolver().notifyChange(uri, null);
+    }
     return returnUri;
   }
 
@@ -296,11 +302,14 @@ public class WeatherProvider extends ContentProvider {
       selection = "1";
     }
     final int rowsDeleted = db.delete(tableName, selection, selectionArgs);
+
     if (rowsDeleted > 0) {
-      getContext().getContentResolver().notifyChange(uri, null);
+      Context context = getContext();
+      if (context != null) {
+        context.getContentResolver().notifyChange(uri, null);
+      }
     }
 
-    // Student: return the actual rows deleted
     return rowsDeleted;
   }
 
@@ -342,7 +351,11 @@ public class WeatherProvider extends ContentProvider {
         values,
         selection, selectionArgs);
     if (rowsUpdated > 0) {
-      getContext().getContentResolver().notifyChange(uri, null);
+      Context context = getContext();
+      if (context != null) {
+        context.getContentResolver().notifyChange(uri, null);
+      }
+
     }
     return rowsUpdated;
   }
@@ -368,8 +381,12 @@ public class WeatherProvider extends ContentProvider {
         } finally {
           db.endTransaction();
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Context context = getContext();
+        if (context != null) {
+          context.getContentResolver().notifyChange(uri, null);
+        }
         return returnCount;
+
       default:
         return super.bulkInsert(uri, values);
     }
@@ -378,7 +395,6 @@ public class WeatherProvider extends ContentProvider {
   // You do not need to call this method. This is a method specifically to
   // assist the testing framework in running smoothly.
   @Override
-  @TargetApi(11)
   public void shutdown() {
     mOpenHelper.close();
     super.shutdown();
