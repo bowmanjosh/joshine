@@ -49,7 +49,8 @@ public class DetailFragment extends Fragment
       WeatherContract.WeatherEntry.COL_HUMIDITY,
       WeatherContract.WeatherEntry.COL_WIND_SPEED,
       WeatherContract.WeatherEntry.COL_DEGREES,
-      WeatherContract.WeatherEntry.COL_PRESSURE
+      WeatherContract.WeatherEntry.COL_PRESSURE,
+      WeatherContract.WeatherEntry.COL_WEATHER_ID
   };
   // private static final int COL_WEATHER_TABLE_ID = 0;
   private static final int COL_WEATHER_DATE = 1;
@@ -60,6 +61,7 @@ public class DetailFragment extends Fragment
   private static final int COL_WEATHER_WIND_SPEED = 6;
   private static final int COL_WEATHER_DEGREES = 7;
   private static final int COL_WEATHER_PRESSURE = 8;
+  private static final int COL_WEATHER_ID = 9;
 
   // Member variables to hold references to Views.
   private ImageView mWeatherIcon;
@@ -97,7 +99,8 @@ public class DetailFragment extends Fragment
     if (rootView != null) {
       Context context = getContext();
 
-      mWeatherIcon.setImageResource(R.mipmap.ic_launcher);
+      mWeatherIcon.setImageResource(Utility.getArtResourceForWeatherCondition(
+          cursor.getInt(COL_WEATHER_ID)));
       long dateLong = cursor.getLong(COL_WEATHER_DATE);
       mDayName.setText(Utility.getDayName(context, dateLong));
       String dateString = Utility.getFormattedMonthDay(dateLong);

@@ -161,4 +161,96 @@ class Utility {
       return shortenedDateFormat.format(dateInMillis);
     }
   }
+
+  /**
+   * Helper method to provide the icon resource id according to the weather condition id returned
+   * by the OpenWeatherMap call.
+   * @param weatherId from OpenWeatherMap API response
+   * @return resource id for the corresponding icon. -1 if no relation is found.
+   */
+  static int getIconResourceForWeatherCondition(int weatherId) {
+    // Based on weather code data found at:
+    // https://openweathermap.org/weather-conditions
+
+    // First, let's check for the unique codes for which we have pictures.
+    switch (weatherId) {
+      case 800:
+        return R.drawable.ic_clear;
+      case 801:
+        return R.drawable.ic_light_clouds;
+      default:
+        break;
+    }
+
+    // If we didn't match in the above block, then we only have a generic category picture.
+    // The categories go by hundreds (200-299, 300-399, etc.) so we can divide weatherId by 100.
+    weatherId = weatherId / 100;
+    switch (weatherId) {
+      case 2:
+        return R.drawable.ic_storm;
+      case 3:
+        return R.drawable.ic_light_rain;
+      case 4:
+        return R.drawable.ic_rain;
+      case 5:
+        return R.drawable.ic_rain;
+      case 6:
+        return R.drawable.ic_rain;
+      case 7:
+        return R.drawable.ic_fog;
+      case 8:
+        return R.drawable.ic_cloudy;
+      default:
+        break;
+    }
+
+    // If we get here, we didn't find a matching code.
+    return -1;
+  }
+
+  /**
+   * Helper method to provide the art resource id according to the weather condition id returned
+   * by the OpenWeatherMap call.
+   * @param weatherId from OpenWeatherMap API response
+   * @return resource id for the corresponding image. -1 if no relation is found.
+   */
+  static int getArtResourceForWeatherCondition(int weatherId) {
+    // Based on weather code data found at:
+    // https://openweathermap.org/weather-conditions
+
+    // First, let's check for the unique codes for which we have pictures.
+    switch (weatherId) {
+      case 800:
+        return R.drawable.art_clear;
+      case 801:
+        return R.drawable.art_light_clouds;
+      default:
+        break;
+    }
+
+    // If we didn't match in the above block, then we only have a generic category picture.
+    // The categories go by hundreds (200-299, 300-399, etc.) so we can divide weatherId by 100.
+    weatherId = weatherId / 100;
+    switch (weatherId) {
+      case 2:
+        return R.drawable.art_storm;
+      case 3:
+        return R.drawable.art_light_rain;
+      case 4:
+        return R.drawable.art_rain;
+      case 5:
+        return R.drawable.art_rain;
+      case 6:
+        return R.drawable.art_rain;
+      case 7:
+        return R.drawable.art_fog;
+      case 8:
+        return R.drawable.art_clouds;
+      default:
+        break;
+    }
+
+    // If we get here, we didn't find a matching code.
+    return -1;
+  }
 }

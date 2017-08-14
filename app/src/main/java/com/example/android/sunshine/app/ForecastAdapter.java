@@ -31,9 +31,9 @@ import android.widget.TextView;
 class ForecastAdapter extends CursorAdapter {
   // private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
 
-  private final int VIEW_TYPE_COUNT = 2;
-  private final int VIEW_TYPE_TODAY = 0;
-  private final int VIEW_TYPE_FUTURE_DAY = 1;
+  private static final int VIEW_TYPE_COUNT = 2;
+  private static final int VIEW_TYPE_TODAY = 0;
+  private static final int VIEW_TYPE_FUTURE_DAY = 1;
 
   private static class ListItemViewHolder {
     final ImageView icon;
@@ -95,8 +95,17 @@ class ForecastAdapter extends CursorAdapter {
   public void bindView(View view, Context context, Cursor cursor) {
     ListItemViewHolder viewHolder = (ListItemViewHolder) view.getTag();
 
-    // Use placeholder image. Later we will use weather ID to set an icon.
-    viewHolder.icon.setImageResource(R.mipmap.ic_launcher);
+    int viewType = getItemViewType(cursor.getPosition());
+    switch (viewType) {
+      case VIEW_TYPE_TODAY:
+        viewHolder.icon.setImageResource(Utility.getArtResourceForWeatherCondition(
+            cursor.getInt(ForecastFragment.COL_WEATHER_ID)));
+        break;
+      case VIEW_TYPE_FUTURE_DAY:
+        viewHolder.icon.setImageResource(Utility.getIconResourceForWeatherCondition(
+            cursor.getInt(ForecastFragment.COL_WEATHER_ID)));
+        break;
+    }
 
     viewHolder.date.setText(Utility.getFriendlyDayString(context,
         cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));

@@ -54,8 +54,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
   public static final int COL_WEATHER_SHORT_DESC = 2;
   public static final int COL_WEATHER_MAX_TEMP = 3;
   public static final int COL_WEATHER_MIN_TEMP = 4;
-  // public static final int COL_LOC_SETTING = 5;
-  // public static final int COL_WEATHER_ID = 6;
+  public static final int COL_LOC_SETTING = 5;
+  public static final int COL_WEATHER_ID = 6;
   // public static final int COL_LATITUDE = 7;
   // public static final int COL_LONGITUDE = 8;
 
