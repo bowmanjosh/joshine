@@ -97,7 +97,7 @@ public class DetailFragment extends Fragment
     if (rootView != null) {
       Context context = getContext();
 
-      mWeatherIcon.setImageResource(R.drawable.ic_launcher);
+      mWeatherIcon.setImageResource(R.mipmap.ic_launcher);
       long dateLong = cursor.getLong(COL_WEATHER_DATE);
       mDayName.setText(Utility.getDayName(context, dateLong));
       String dateString = Utility.getFormattedMonthDay(dateLong);

@@ -96,7 +96,7 @@ class ForecastAdapter extends CursorAdapter {
     ListItemViewHolder viewHolder = (ListItemViewHolder) view.getTag();
 
     // Use placeholder image. Later we will use weather ID to set an icon.
-    viewHolder.icon.setImageResource(R.drawable.ic_launcher);
+    viewHolder.icon.setImageResource(R.mipmap.ic_launcher);
 
     viewHolder.date.setText(Utility.getFriendlyDayString(context,
         cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
