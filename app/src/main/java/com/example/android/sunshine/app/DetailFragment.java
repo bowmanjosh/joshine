@@ -79,6 +79,12 @@ public class DetailFragment extends Fragment
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    // If there is no URI in the Intent, don't create a loader
+    Intent intent = getActivity().getIntent();
+    if (intent == null || intent.getData() == null) {
+      return null;
+    }
+
     return new CursorLoader(getActivity(),
         mUri,
         DETAIL_PROJECTION,

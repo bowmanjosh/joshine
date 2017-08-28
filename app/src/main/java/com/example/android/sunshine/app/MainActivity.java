@@ -9,19 +9,23 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-  private final String FORECASTFRAGMENT_TAG = "FFTAG";
+  private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
   private String mLocation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    mLocation = Utility.getPreferredLocation(this);
     super.onCreate(savedInstanceState);
+    mLocation = Utility.getPreferredLocation(this);
     setContentView(R.layout.activity_main);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-          .commit();
+
+    // This 'if' checks if we are in tablet mode.
+    if (findViewById(R.id.weather_detail_container) != null) {
+      if (savedInstanceState == null) {
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+            .commit();
+      }
     }
   }
 
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     if (location != null && !location.equals(mLocation)) {
       mLocation = location;
       ForecastFragment fragment = (ForecastFragment)getSupportFragmentManager()
-          .findFragmentByTag(FORECASTFRAGMENT_TAG);
+          .findFragmentById(R.id.fragment_forecast);
       if (fragment != null) {
         fragment.onLocationChanged();
       }
