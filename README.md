@@ -1,16 +1,9 @@
-Sunshine
-========
+# Joshine
 
-Sunshine is the companion Android app for the Udacity course [Developing Android Apps: Android Fundamentals](https://www.udacity.com/course/ud853).
+Joshine is my student copy of "Sunshine", a companion app for a class from Google called "Developing Android Apps: Android Fundamentals" that was available on the e-learning website Udacity. I tried to find the Udacity page for this class in October 2022 and could not find it; the class may not be available on Udacity any more. The example version of the Sunshine app that Google made for this class can be found here: [Sunshine Version 2](https://github.com/udacity/Sunshine-Version-2/). I completed the coursework in this class up to lesson 5.09; this added some scaffolding to begin support for both a phone and tablet UI, instead of just a phone UI. I believe this means my code corresponds roughly to [this commit](https://github.com/udacity/Sunshine-Version-2/commit/1ea411663e697358ec3a89fb1a161eaea99af42e) from Google's example code. 
 
-Take the course to find out how to build this app a step at a time, and eventually create your own Android App!
+I am uploading this code to Github simply as a personal project that I worked on in the past. I last worked on it in 2017, and the example code is from 2015, so it is pretty old by Android standards. I tried loading this repository into a modern version of Android Studio (v2021.3.1) and it looks like it would need a bit of work to even get it to build. If you do try to get it running, please note that you will need an API key for [OpenWeather](https://openweathermap.org/) in order to fetch live weather data.
 
-This is the second version of the Sunshine code. The repository has been updated on:
+## Licensing
 
-* **February 13th, 2015** - Major update
-* February 25, 2015 - Minor bug fixes
-* March 4th, 2015 - Minor bug fixes
-
-For the original version, please go [here](https://github.com/udacity/Sunshine).
-
-A changelog for the course can be found [here](https://docs.google.com/a/knowlabs.com/document/d/193xJb_OpcNCqgquMhxPrMh05IEYFXQqt0S6-6YK8gBw/pub).
+As noted above, the example code for this class was written by Google. I copied some of that example code for Joshine, so some of the code here was written by Google, and some was written by me. The Google code was licensed under version 2 of the Apache License, so to make things easy I am releasing my contributions in this repository under that license as well. A copy of the license can be found in the "LICENSE" file in the root directory of the repository.
